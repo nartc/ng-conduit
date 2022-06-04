@@ -12,6 +12,7 @@ specifiers:
   '@angular/platform-browser': ^14.0.0
   '@angular/platform-browser-dynamic': ^14.0.0
   '@angular/router': ^14.0.0
+  nswag: 13.16.1
   prettier: 2.6.2
   rxjs: ~7.5.0
   tslib: ^2.3.0
@@ -35,6 +36,7 @@ devDependencies:
   '@angular-devkit/build-angular': 14.0.0_f7csfedcdjxu456zjk67d4i3ni
   '@angular/cli': 14.0.0
   '@angular/compiler-cli': 14.0.0_bxyrl5ek6wspoqweszff6nucxi
+  nswag: 13.16.1
   prettier: 2.6.2
   typescript: 4.7.3
 
@@ -4816,6 +4818,12 @@ packages:
       console-control-strings: 1.1.0
       gauge: 4.0.4
       set-blocking: 2.0.0
+    dev: true
+
+  /nswag/13.16.1:
+    resolution: {integrity: sha512-L/ll7TeMaYMVPGTT8T9MrEVP1FjSod8/quRB9WuFPdvgFAsDILBwVuSifghzaX9DXmo1G5C22xmE1/53EPywig==}
+    engines: {npm: '>=3.10.8'}
+    hasBin: true
     dev: true
 
   /nth-check/2.1.1:
