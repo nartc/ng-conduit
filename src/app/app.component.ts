@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthStore } from './shared/data-access/auth.store';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +11,9 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
 })
 export class App {
-  title = 'ng-conduit';
+  private readonly authStore = inject(AuthStore);
+
+  ngOnInit() {
+    this.authStore.refresh();
+  }
 }

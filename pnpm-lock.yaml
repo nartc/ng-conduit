@@ -12,6 +12,7 @@ specifiers:
   '@angular/platform-browser': ^14.0.0
   '@angular/platform-browser-dynamic': ^14.0.0
   '@angular/router': ^14.0.0
+  '@ngrx/component-store': 14.0.0-beta.0
   nswag: 13.16.1
   prettier: 2.6.2
   rxjs: ~7.5.0
@@ -28,6 +29,7 @@ dependencies:
   '@angular/platform-browser': 14.0.0_bkheyas7dwy5ydavumdgkcqpgi
   '@angular/platform-browser-dynamic': 14.0.0_3snnhtiprcku4ghmbfcdfwmez4
   '@angular/router': 14.0.0_enkwga4ygnomgefxpl7zqyrxcy
+  '@ngrx/component-store': 14.0.0-beta.0_mms3mhj442xsi3viotv6an2mnm
   rxjs: 7.5.5
   tslib: 2.4.0
   zone.js: 0.11.5
@@ -1744,6 +1746,17 @@ packages:
   /@leichtgewicht/ip-codec/2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: true
+
+  /@ngrx/component-store/14.0.0-beta.0_mms3mhj442xsi3viotv6an2mnm:
+    resolution: {integrity: sha512-06+bLYmXauwaAJLlBf2dWhU13B8B2aPT09Py/2Tp/SoW62ZUOk0S0SHonocYcNHIXnNhydprZSDGqgIfViiMIg==}
+    peerDependencies:
+      '@angular/core': ^14.0.0-rc.0
+      rxjs: ^6.5.3 || ^7.5.0
+    dependencies:
+      '@angular/core': 14.0.0_rxjs@7.5.5+zone.js@0.11.5
+      rxjs: 7.5.5
+      tslib: 2.4.0
+    dev: false
 
   /@ngtools/webpack/14.0.0_cayjjatrvqw3qbwf2xlyrgv27u:
     resolution: {integrity: sha512-lUcJ5DiRCY+Xj01R38bDbAlELbO+0yT3n4zshBeiuzo/Lc+yQM2XhVe9stsI5I+SwH6YsCU9kp+jb7iaZh7L7w==}
