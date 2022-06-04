@@ -69,7 +69,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "src/app/shared/api.ts",
+      "output": "src/app/shared/data-access/api.ts",
       "newLineBehavior": "Auto"
     }
   }
