@@ -38,7 +38,7 @@ import { Component } from "@angular/core";
       </li>
     </ul>
   `,
-  styles: [],
+  standalone: true,
 })
 export class AppComponent {
   title = "ng-conduit";
