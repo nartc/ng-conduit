@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { defer, of, switchMap } from 'rxjs';
+import { defer, filter, Observable, of, switchMap } from 'rxjs';
 import { ApiClient, User } from './api';
-import { LocalStore } from './local.store';
+import { LocalStorageService } from './local-storage.service';
 
 export type AuthStatus = 'idle' | 'authenticated' | 'unauthenticated';
 
@@ -19,15 +19,24 @@ export const initialAuthState: AuthState = {
 @Injectable({ providedIn: 'root' })
 export class AuthStore extends ComponentStore<AuthState> {
   private readonly apiClient = inject(ApiClient);
-  private readonly localStore = inject(LocalStore);
+  private readonly localStorageService = inject(LocalStorageService);
 
   readonly user$ = this.select((s) => s.user);
   readonly status$ = this.select((s) => s.status);
 
   readonly isAuthenticated$ = this.select(
-    this.status$,
-    (status) => status === 'authenticated'
+    this.status$.pipe(filter((status) => status !== 'idle')),
+    (status) => status === 'authenticated',
+    { debounce: true }
   );
+
+  readonly auth$: Observable<{ isAuthenticated: boolean; user: User | null }> =
+    this.select(
+      this.isAuthenticated$,
+      this.user$,
+      (isAuthenticated, user) => ({ user, isAuthenticated }),
+      { debounce: true }
+    );
 
   constructor() {
     super(initialAuthState);
@@ -36,7 +45,7 @@ export class AuthStore extends ComponentStore<AuthState> {
   readonly refresh = this.effect<void>(
     switchMap(() =>
       defer(() => {
-        const token = this.localStore.getItem('ng-conduit-token');
+        const token = this.localStorageService.getItem('ng-conduit-token');
         if (!token) {
           return of(null);
         }
@@ -48,6 +57,7 @@ export class AuthStore extends ComponentStore<AuthState> {
               user: response?.user || null,
               status: !!response ? 'authenticated' : 'unauthenticated',
             });
+            this.localStorageService.setItem('ng-conduit-user', response?.user);
           },
           (error) => {
             console.error('error refreshing current user: ', error);

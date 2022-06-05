@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { injectLocalStorage } from '../di/storage';
 
 @Injectable({ providedIn: 'root' })
-export class LocalStore {
+export class LocalStorageService {
   private readonly ls = injectLocalStorage();
 
   getItem(key: string): string | null {

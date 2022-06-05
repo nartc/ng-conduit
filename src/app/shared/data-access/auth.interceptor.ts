@@ -7,17 +7,17 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable, Provider } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStore } from './local.store';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private readonly localStore = inject(LocalStore);
+  private readonly localStorageService = inject(LocalStorageService);
 
   intercept(
     req: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const token = this.localStore.getItem('ng-conduit-token');
+    const token = this.localStorageService.getItem('ng-conduit-token');
 
     if (token) {
       req = req.clone({

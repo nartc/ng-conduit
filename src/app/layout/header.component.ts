@@ -1,39 +1,89 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   template: `
     <nav class="navbar navbar-light">
       <div class="container">
-        <a class="navbar-brand" href="index.html">conduit</a>
+        <a class="navbar-brand" routerLink="/">conduit</a>
         <ul class="nav navbar-nav pull-xs-right">
           <li class="nav-item">
             <!-- Add "active" class when you're on that page" -->
-            <a class="nav-link active" href="">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="">
-              <i class="ion-compose"></i>
-              &nbsp;New Article
+            <a
+              class="nav-link"
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              Home
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="">
-              <i class="ion-gear-a"></i>
-              &nbsp;Settings
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="">Sign in</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="">Sign up</a>
-          </li>
+          <ng-container *ngIf="isAuthenticated; else nonAuthenticated">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/editor"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i class="ion-compose"></i>
+                &nbsp;New Article
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/settings"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i class="ion-gear-a"></i>
+                &nbsp;Settings
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [routerLink]="['/profile', username]"
+                routerLinkActive="active"
+              >
+                {{ username }}
+              </a>
+            </li>
+          </ng-container>
+          <ng-template #nonAuthenticated>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/login"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Sign in
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/register"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Sign up
+              </a>
+            </li>
+          </ng-template>
         </ul>
       </div>
     </nav>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  imports: [RouterModule, CommonModule],
 })
-export class Header {}
+export class Header {
+  @Input() isAuthenticated = false;
+  @Input() username?: string;
+}

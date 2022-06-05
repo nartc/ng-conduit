@@ -91,7 +91,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/UserResponse"
