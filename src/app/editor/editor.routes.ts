@@ -9,6 +9,8 @@ export const editorRoutes: Route[] = [
   {
     path: ':slug',
     loadComponent: () =>
-      import('./edit-article.component').then((m) => m.EditArticle),
+      import('./edit-article/edit-article.component').then(
+        (m) => m.EditArticle
+      ),
   },
 ];

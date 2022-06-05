@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LoginUser } from '../shared/data-access/api';
 import { injectComponentStore } from '../shared/di/store';
-import { AuthLayout } from '../shared/ui/auth-layout.component';
+import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { LoginStore } from './login.store';
 

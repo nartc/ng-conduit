@@ -8,6 +8,6 @@ export const profileRoutes: Route[] = [
   {
     path: 'favorites',
     loadComponent: () =>
-      import('./favorites.component').then((m) => m.Favorites),
+      import('./favorites/favorites.component').then((m) => m.Favorites),
   },
 ];
