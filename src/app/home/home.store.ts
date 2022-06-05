@@ -21,16 +21,15 @@ import {
   TagsResponse,
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
+import { ApiStatus } from '../shared/data-access/models';
 import { injectComponentStore } from '../shared/di/store';
-
-export type HomeStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export interface HomeState {
   articles: Article[];
   tags: TagsResponse['tags'];
   selectedTag: string;
   feedType: 'global' | 'feed';
-  statuses: Record<string, HomeStatus>;
+  statuses: Record<string, ApiStatus>;
 }
 
 export const initialHomeState: HomeState = {
@@ -44,15 +43,11 @@ export const initialHomeState: HomeState = {
   },
 };
 
-export interface HomeVm {
+export type HomeVm = Omit<HomeState, 'statuses'> & {
   isAuthenticated: boolean;
-  articles: Article[];
-  tags: string[];
-  selectedTag: string;
-  feedType: 'global' | 'feed';
-  articlesStatus: HomeStatus;
-  tagsStatus: HomeStatus;
-}
+  articlesStatus: ApiStatus;
+  tagsStatus: ApiStatus;
+};
 
 @Injectable()
 export class HomeStore
@@ -214,7 +209,7 @@ export class HomeStore
 
   private readonly setStatus = this.updater<{
     key: string;
-    status: HomeStatus;
+    status: ApiStatus;
   }>((state, { key, status }) => ({
     ...state,
     statuses: { ...state.statuses, [key]: status },

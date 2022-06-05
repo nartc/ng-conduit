@@ -6,7 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { HomeStatus } from '../../home.store';
+import { ApiStatus } from '../../../shared/data-access/models';
 
 @Component({
   selector: 'app-tags[status]',
@@ -39,7 +39,7 @@ import { HomeStatus } from '../../home.store';
   imports: [CommonModule],
 })
 export class Tags {
-  @Input() status!: HomeStatus;
+  @Input() status!: ApiStatus;
   @Input() tags: string[] = [];
 
   @Output() selectTag = new EventEmitter<string>();

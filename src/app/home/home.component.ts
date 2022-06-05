@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Article } from '../shared/data-access/api';
 import { injectComponentStore } from '../shared/di/store';
+import { Articles } from '../shared/ui/articles/articles.component';
 import { HomeStore } from './home.store';
-import { Articles } from './ui/articles/articles.component';
 import { Banner } from './ui/banner/banner.component';
 import { FeedToggle } from './ui/feed-toggle/feed-toggle.component';
 import { Tags } from './ui/tags/tags.component';
@@ -30,9 +30,7 @@ import { Tags } from './ui/tags/tags.component';
                 [status]="vm.articlesStatus"
                 [articles]="vm.articles"
                 (toggleFavorite)="toggleFavorite($event)"
-              >
-                <ng-container *ngTemplateOutlet="loading"></ng-container>
-              </app-articles>
+              ></app-articles>
             </div>
 
             <div class="col-md-3">
@@ -41,16 +39,12 @@ import { Tags } from './ui/tags/tags.component';
                 [tags]="vm.tags"
                 (selectTag)="selectTag($event)"
               >
-                <ng-container *ngTemplateOutlet="loading"></ng-container>
+                <p>Loading...</p>
               </app-tags>
             </div>
           </div>
         </div>
       </div>
-
-      <ng-template #loading>
-        <p>Loading...</p>
-      </ng-template>
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

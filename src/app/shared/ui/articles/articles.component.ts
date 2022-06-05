@@ -6,8 +6,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Article } from '../../../shared/data-access/api';
-import { HomeStatus } from '../../home.store';
+import { Article } from '../../data-access/api';
+import { ApiStatus } from '../../data-access/models';
 import { ArticlePreview } from '../article-preview/article-preview.component';
 
 @Component({
@@ -22,12 +22,12 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
         ></app-article-preview>
       </ng-container>
       <ng-template #noArticles>
-        <p>No articles</p>
+        <app-article-preview>No articles are here...yet</app-article-preview>
       </ng-template>
     </ng-container>
 
     <ng-template #loading>
-      <ng-content></ng-content>
+      <app-article-preview>Loading articles...</app-article-preview>
     </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +35,7 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
   imports: [ArticlePreview, CommonModule],
 })
 export class Articles {
-  @Input() status!: HomeStatus;
+  @Input() status!: ApiStatus;
   @Input() articles: Article[] = [];
 
   @Output() toggleFavorite = new EventEmitter<Article>();
