@@ -35,4 +35,10 @@ export class LocalStorageService {
       this.ls.setItem(key, data as string);
     }
   }
+
+  removeItem(key: string) {
+    if (this.ls) {
+      this.ls.removeItem(key);
+    }
+  }
 }

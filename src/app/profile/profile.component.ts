@@ -15,6 +15,7 @@ import { UserInfo } from './ui/user-info/user-info.component';
       <app-user-info
         *ngIf="vm.profile"
         [profile]="vm.profile"
+        [isOwner]="vm.isOwner"
         (toggleFollow)="toggleFollow(vm.profile)"
       ></app-user-info>
 

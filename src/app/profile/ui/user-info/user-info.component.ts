@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,6 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Profile } from '../../../shared/data-access/api';
 
 @Component({
@@ -23,14 +25,24 @@ import { Profile } from '../../../shared/data-access/api';
             <p>
               {{ profile.bio }}
             </p>
-            <button
+            <a
+              *ngIf="isOwner; else nonOwner"
               class="btn btn-sm btn-outline-secondary action-btn"
-              (click)="toggleFollow.emit()"
+              routerLink="/settings"
             >
-              <i class="ion-plus-round"></i>
-              &nbsp; {{ profile.following ? 'Unfollow' : 'Follow' }}
-              {{ profile.username }}
-            </button>
+              <i class="ion-gear-a"></i>
+              Edit profile Settings
+            </a>
+            <ng-template #nonOwner>
+              <button
+                class="btn btn-sm btn-outline-secondary action-btn"
+                (click)="toggleFollow.emit()"
+              >
+                <i class="ion-plus-round"></i>
+                &nbsp; {{ profile.following ? 'Unfollow' : 'Follow' }}
+                {{ profile.username }}
+              </button>
+            </ng-template>
           </div>
         </div>
       </div>
@@ -38,9 +50,11 @@ import { Profile } from '../../../shared/data-access/api';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  imports: [CommonModule, RouterModule],
 })
 export class UserInfo {
   @Input() profile!: Profile;
+  @Input() isOwner = false;
 
   @Output() toggleFollow = new EventEmitter();
 }

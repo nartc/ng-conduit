@@ -16,7 +16,9 @@ import {
   tap,
 } from 'rxjs';
 import { ApiClient, Article, Profile } from '../shared/data-access/api';
+import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
+import { injectComponentStore } from '../shared/di/store';
 
 export interface ProfileState {
   profile: Profile | null;
@@ -38,6 +40,7 @@ export const initialProfileState: ProfileState = {
 export type ProfileVm = Omit<ProfileState, 'statuses'> & {
   profileStatus: ApiStatus;
   articlesStatus: ApiStatus;
+  isOwner: boolean;
 };
 
 @Injectable()
@@ -47,6 +50,7 @@ export class ProfileStore
 {
   private readonly apiClient = inject(ApiClient);
   private readonly route = inject(ActivatedRoute);
+  private readonly authStore = injectComponentStore(AuthStore);
 
   readonly username$ = this.route.params.pipe(
     map((params) => params['username']),
@@ -69,17 +73,19 @@ export class ProfileStore
   );
 
   readonly vm$: Observable<ProfileVm> = this.select(
+    this.authStore.auth$,
     this.profile$,
     this.articles$,
     this.articleType$,
     this.profileStatus$.pipe(filter((status) => status !== 'idle')),
     this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
-    (profile, articles, articleType, profileStatus, articlesStatus) => ({
+    (auth, profile, articles, articleType, profileStatus, articlesStatus) => ({
       profile,
       articles,
       articleType,
       profileStatus,
       articlesStatus,
+      isOwner: auth.user?.username === profile?.username,
     }),
     { debounce: true }
   );

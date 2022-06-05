@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { defer, filter, Observable, of, switchMap } from 'rxjs';
+import { defer, filter, Observable, of, switchMap, tap } from 'rxjs';
 import { ApiClient, User } from './api';
 import { LocalStorageService } from './local-storage.service';
 
@@ -20,6 +21,7 @@ export const initialAuthState: AuthState = {
 export class AuthStore extends ComponentStore<AuthState> {
   private readonly apiClient = inject(ApiClient);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly router = inject(Router);
 
   readonly user$ = this.select((s) => s.user);
   readonly status$ = this.select((s) => s.status);
@@ -66,5 +68,14 @@ export class AuthStore extends ComponentStore<AuthState> {
         )
       )
     )
+  );
+
+  readonly logout = this.effect<void>(
+    tap(() => {
+      this.localStorageService.removeItem('ng-conduit-token');
+      this.localStorageService.removeItem('ng-conduit-user');
+      this.refresh();
+      void this.router.navigate(['/']);
+    })
   );
 }
