@@ -1,11 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { CanActivate, CanLoad, Router, UrlTree } from '@angular/router';
+import {
+  CanActivate,
+  CanActivateChild,
+  CanLoad,
+  Router,
+  UrlTree,
+} from '@angular/router';
 import { map, Observable, take } from 'rxjs';
 import { injectComponentStore } from '../di/store';
 import { AuthStore } from './auth.store';
 
-@Injectable()
-export class AuthGuard implements CanActivate, CanLoad {
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   private readonly authStore = injectComponentStore(AuthStore);
   private readonly router = inject(Router);
 
@@ -14,6 +20,10 @@ export class AuthGuard implements CanActivate, CanLoad {
   }
 
   canActivate(): Observable<boolean | UrlTree> {
+    return this.isAuthenticated$();
+  }
+
+  canActivateChild(): Observable<boolean | UrlTree> {
     return this.isAuthenticated$();
   }
 

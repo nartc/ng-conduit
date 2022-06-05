@@ -25,7 +25,9 @@ export class RegisterStore extends ComponentStore<RegisterState> {
 
   readonly errors$ = this.select((s) => s.errors);
 
-  readonly registerErrors$ = this.select(this.errors$, processAuthErrors);
+  readonly registerErrors$ = this.select(this.errors$, processAuthErrors, {
+    debounce: true,
+  });
 
   constructor() {
     super(initialRegisterState);

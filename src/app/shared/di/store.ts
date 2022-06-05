@@ -6,7 +6,13 @@ export type PublicComponentStore<
   TStore extends ComponentStore<TState>
 > = Omit<
   TStore,
-  'ngOnDestroy' | 'patchState' | 'setState' | 'state$' | 'updater' | 'effect'
+  | 'ngOnDestroy'
+  | 'patchState'
+  | 'setState'
+  | 'state$'
+  | 'updater'
+  | 'effect'
+  | 'ngrxOnStateInit'
 >;
 
 export function injectComponentStore<

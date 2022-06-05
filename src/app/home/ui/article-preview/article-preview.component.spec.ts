@@ -1,15 +1,14 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Home } from './home.component';
+import { ArticlePreview } from './article-preview.component';
 
-describe(Home.name, () => {
-  let fixture: ComponentFixture<Home>;
+describe(ArticlePreview.name, () => {
+  let fixture: ComponentFixture<ArticlePreview>;
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule],
-    }).createComponent(Home);
+      imports: [RouterTestingModule],
+    }).createComponent(ArticlePreview);
   });
 
   it('should create component', () => {

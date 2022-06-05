@@ -25,7 +25,9 @@ export class LoginStore extends ComponentStore<LoginState> {
 
   readonly errors$ = this.select((s) => s.errors);
 
-  readonly loginErrors$ = this.select(this.errors$, processAuthErrors);
+  readonly loginErrors$ = this.select(this.errors$, processAuthErrors, {
+    debounce: true,
+  });
 
   constructor() {
     super(initialLoginState);

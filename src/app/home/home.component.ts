@@ -1,97 +1,81 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { provideComponentStore } from '@ngrx/component-store';
+import { Article } from '../shared/data-access/api';
+import { injectComponentStore } from '../shared/di/store';
+import { HomeStore } from './home.store';
+import { Articles } from './ui/articles/articles.component';
+import { Banner } from './ui/banner/banner.component';
+import { FeedToggle } from './ui/feed-toggle/feed-toggle.component';
+import { Tags } from './ui/tags/tags.component';
 
 @Component({
   selector: 'app-home',
   template: `
-    <div class="home-page">
-      <div class="banner">
-        <div class="container">
-          <h1 class="logo-font">conduit</h1>
-          <p>A place to share your knowledge.</p>
-        </div>
-      </div>
+    <ng-container *ngIf="vm$ | async as vm">
+      <div class="home-page">
+        <app-banner></app-banner>
 
-      <div class="container page">
-        <div class="row">
-          <div class="col-md-9">
-            <div class="feed-toggle">
-              <ul class="nav nav-pills outline-active">
-                <li class="nav-item">
-                  <a class="nav-link disabled" href="">Your Feed</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active" href="">Global Feed</a>
-                </li>
-              </ul>
+        <div class="container page">
+          <div class="row">
+            <div class="col-md-9">
+              <app-feed-toggle
+                [selectedTag]="vm.selectedTag"
+                [isFeedDisabled]="!vm.isAuthenticated"
+                [feedType]="vm.feedType"
+                (selectFeed)="selectFeed()"
+                (selectGlobal)="selectGlobal()"
+              ></app-feed-toggle>
+              <app-articles
+                [status]="vm.articlesStatus"
+                [articles]="vm.articles"
+                (toggleFavorite)="toggleFavorite($event)"
+              >
+                <ng-container *ngTemplateOutlet="loading"></ng-container>
+              </app-articles>
             </div>
 
-            <div class="article-preview">
-              <div class="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div class="info">
-                  <a href="" class="author">Eric Simons</a>
-                  <span class="date">January 20th</span>
-                </div>
-                <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i class="ion-heart"></i>
-                  29
-                </button>
-              </div>
-              <a href="" class="preview-link">
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
-
-            <div class="article-preview">
-              <div class="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div class="info">
-                  <a href="" class="author">Albert Pai</a>
-                  <span class="date">January 20th</span>
-                </div>
-                <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i class="ion-heart"></i>
-                  32
-                </button>
-              </div>
-              <a href="" class="preview-link">
-                <h1>
-                  The song you won't ever stop singing. No matter how hard you
-                  try.
-                </h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="sidebar">
-              <p>Popular Tags</p>
-
-              <div class="tag-list">
-                <a href="" class="tag-pill tag-default">programming</a>
-                <a href="" class="tag-pill tag-default">javascript</a>
-                <a href="" class="tag-pill tag-default">emberjs</a>
-                <a href="" class="tag-pill tag-default">angularjs</a>
-                <a href="" class="tag-pill tag-default">react</a>
-                <a href="" class="tag-pill tag-default">mean</a>
-                <a href="" class="tag-pill tag-default">node</a>
-                <a href="" class="tag-pill tag-default">rails</a>
-              </div>
+            <div class="col-md-3">
+              <app-tags
+                [status]="vm.tagsStatus"
+                [tags]="vm.tags"
+                (selectTag)="selectTag($event)"
+              >
+                <ng-container *ngTemplateOutlet="loading"></ng-container>
+              </app-tags>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <ng-template #loading>
+        <p>Loading...</p>
+      </ng-template>
+    </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  imports: [Banner, Tags, FeedToggle, Articles, CommonModule],
+  providers: [provideComponentStore(HomeStore)],
 })
-export class Home {}
+export class Home {
+  private readonly store = injectComponentStore(HomeStore);
+
+  readonly vm$ = this.store.vm$;
+
+  selectTag(tag: string) {
+    this.store.getArticlesByTag(tag);
+  }
+
+  selectFeed() {
+    this.store.getFeedArticles();
+  }
+
+  selectGlobal() {
+    this.store.getArticles();
+  }
+
+  toggleFavorite(article: Article) {
+    this.store.toggleFavorite(article);
+  }
+}

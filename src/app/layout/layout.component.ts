@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { injectComponentStore } from '../shared/di/store';
-import { Footer } from './footer.component';
-import { Header } from './header.component';
+import { Footer } from './ui/footer/footer.component';
+import { Header } from './ui/header/header.component';
 
 @Component({
   selector: 'app-layout',

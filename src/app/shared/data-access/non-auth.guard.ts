@@ -4,7 +4,7 @@ import { map, Observable, take } from 'rxjs';
 import { injectComponentStore } from '../di/store';
 import { AuthStore } from './auth.store';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NonAuthGuard implements CanActivate, CanLoad {
   private readonly authStore = injectComponentStore(AuthStore);
   private readonly router = inject(Router);
