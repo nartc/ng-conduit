@@ -5,7 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "postbuild": "for i in $(find dist/ng-conduit/ -type f -print); do brotli $i; done",
     "watch": "ng build --watch --configuration development"
   },
   "private": true,
