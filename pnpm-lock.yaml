@@ -14,12 +14,14 @@ specifiers:
   '@angular/router': ^14.0.0
   '@ngrx/component-store': ~14.0.0-beta.0
   '@types/jasmine': ~4.0.3
+  '@types/marked': ~4.0.3
   jasmine-core: ~4.1.1
   karma: ~6.3.20
   karma-chrome-launcher: ~3.1.1
   karma-coverage: ~2.2.0
   karma-jasmine: ~5.0.1
   karma-jasmine-html-reporter: ~2.0.0
+  marked: ~4.0.16
   nswag: 13.16.1
   prettier: 2.6.2
   rxjs: ~7.5.0
@@ -37,6 +39,7 @@ dependencies:
   '@angular/platform-browser-dynamic': 14.0.0_3snnhtiprcku4ghmbfcdfwmez4
   '@angular/router': 14.0.0_enkwga4ygnomgefxpl7zqyrxcy
   '@ngrx/component-store': 14.0.0-beta.0_mms3mhj442xsi3viotv6an2mnm
+  marked: 4.0.16
   rxjs: 7.5.5
   tslib: 2.4.0
   zone.js: 0.11.5
@@ -46,6 +49,7 @@ devDependencies:
   '@angular/cli': 14.0.0
   '@angular/compiler-cli': 14.0.0_bxyrl5ek6wspoqweszff6nucxi
   '@types/jasmine': 4.0.3
+  '@types/marked': 4.0.3
   jasmine-core: 4.1.1
   karma: 6.3.20
   karma-chrome-launcher: 3.1.1
@@ -2000,6 +2004,10 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
+
+  /@types/marked/4.0.3:
+    resolution: {integrity: sha512-HnMWQkLJEf/PnxZIfbm0yGJRRZYYMhb++O9M36UCTA9z53uPvVoSlAwJr3XOpDEryb7Hwl1qAx/MV6YIW1RXxg==}
     dev: true
 
   /@types/mime/1.3.2:
@@ -4741,6 +4749,12 @@ packages:
       - bluebird
       - supports-color
     dev: true
+
+  /marked/4.0.16:
+    resolution: {integrity: sha512-wahonIQ5Jnyatt2fn8KqF/nIqZM8mh3oRu2+l5EANGMhu6RFjiSG52QNE2eWzFMI94HqYSgN184NurgNG6CztA==}
+    engines: {node: '>= 12'}
+    hasBin: true
+    dev: false
 
   /media-typer/0.3.0:
     resolution: {integrity: sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=}

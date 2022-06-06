@@ -15,6 +15,6 @@ export class App {
   private readonly authStore = injectComponentStore(AuthStore);
 
   ngOnInit() {
-    this.authStore.refresh();
+    this.authStore.init();
   }
 }

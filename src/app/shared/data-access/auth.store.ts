@@ -1,19 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { defer, filter, Observable, of, switchMap, tap } from 'rxjs';
-import { ApiClient, User } from './api';
+import { defer, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { ApiClient, Profile, User } from './api';
 import { LocalStorageService } from './local-storage.service';
 
 export type AuthStatus = 'idle' | 'authenticated' | 'unauthenticated';
 
 export interface AuthState {
   user: User | null;
+  profile: Profile | null;
   status: AuthStatus;
 }
 
 export const initialAuthState: AuthState = {
   user: null,
+  profile: null,
   status: 'idle',
 };
 
@@ -24,6 +26,7 @@ export class AuthStore extends ComponentStore<AuthState> {
   private readonly router = inject(Router);
 
   readonly user$ = this.select((s) => s.user);
+  readonly profile$ = this.select((s) => s.profile);
   readonly status$ = this.select((s) => s.status);
 
   readonly isAuthenticated$ = this.select(
@@ -32,16 +35,30 @@ export class AuthStore extends ComponentStore<AuthState> {
     { debounce: true }
   );
 
-  readonly auth$: Observable<{ isAuthenticated: boolean; user: User | null }> =
-    this.select(
-      this.isAuthenticated$,
-      this.user$,
-      (isAuthenticated, user) => ({ user, isAuthenticated }),
-      { debounce: true }
-    );
+  readonly auth$: Observable<{
+    isAuthenticated: boolean;
+    user: User | null;
+    profile: Profile | null;
+  }> = this.select(
+    this.isAuthenticated$,
+    this.user$,
+    this.profile$,
+    (isAuthenticated, user, profile) => ({ user, isAuthenticated, profile }),
+    { debounce: true }
+  );
 
   constructor() {
     super(initialAuthState);
+  }
+
+  init() {
+    this.refresh();
+    this.profile(
+      this.user$.pipe(
+        filter((user): user is User => !!user),
+        map((user) => user.username)
+      )
+    );
   }
 
   readonly refresh = this.effect<void>(
@@ -64,6 +81,21 @@ export class AuthStore extends ComponentStore<AuthState> {
           (error) => {
             console.error('error refreshing current user: ', error);
             this.patchState({ user: null, status: 'unauthenticated' });
+          }
+        )
+      )
+    )
+  );
+
+  readonly profile = this.effect<string>(
+    switchMap((username) =>
+      this.apiClient.getProfileByUsername(username).pipe(
+        tapResponse(
+          (response) => {
+            this.patchState({ profile: response.profile });
+          },
+          (error) => {
+            console.error('error getting profile: ', error);
           }
         )
       )
