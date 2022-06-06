@@ -4,10 +4,21 @@ export const profileRoutes: Route[] = [
   {
     path: '',
     loadComponent: () => import('./profile.component').then((m) => m.Profile),
-  },
-  {
-    path: 'favorites',
-    loadComponent: () =>
-      import('./favorites/favorites.component').then((m) => m.Favorites),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./my-articles/my-articles.component').then(
+            (m) => m.MyArticles
+          ),
+      },
+      {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./favorites-articles/favorites-articles.component').then(
+            (m) => m.FavoritesArticles
+          ),
+      },
+    ],
   },
 ];

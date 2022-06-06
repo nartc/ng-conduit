@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Profile as ApiProfile } from '../shared/data-access/api';
 import { injectComponentStore } from '../shared/di/store';
@@ -23,14 +24,9 @@ import { UserInfo } from './ui/user-info/user-info.component';
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
             <app-articles-toggle
-              [articlesType]="vm.articleType"
-              (selectProfileArticles)="selectProfileArticles(vm.profile)"
-              (selectFavoritedArticles)="selectFavoritedArticles(vm.profile)"
+              [username]="vm.profile.username"
             ></app-articles-toggle>
-            <app-articles
-              [articles]="vm.articles"
-              [status]="vm.articlesStatus"
-            ></app-articles>
+            <router-outlet></router-outlet>
           </div>
         </div>
       </div>
@@ -39,22 +35,14 @@ import { UserInfo } from './ui/user-info/user-info.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   providers: [provideComponentStore(ProfileStore)],
-  imports: [UserInfo, ArticlesToggle, Articles, CommonModule],
+  imports: [UserInfo, ArticlesToggle, Articles, CommonModule, RouterModule],
 })
 export class Profile {
   private readonly store = injectComponentStore(ProfileStore);
 
-  readonly vm$ = this.store.vm$;
+  readonly vm$ = this.store.profileVm$;
 
   toggleFollow(profile: ApiProfile) {
     this.store.toggleFollow(profile);
-  }
-
-  selectProfileArticles(profile: ApiProfile) {
-    this.store.getArticles({ author: profile.username, isFavorited: false });
-  }
-
-  selectFavoritedArticles(profile: ApiProfile) {
-    this.store.getArticles({ author: profile.username, isFavorited: true });
   }
 }

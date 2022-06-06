@@ -14,6 +14,7 @@ import {
   pipe,
   switchMap,
   tap,
+  withLatestFrom,
 } from 'rxjs';
 import { ApiClient, Article, Profile } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
@@ -23,23 +24,20 @@ import { injectComponentStore } from '../shared/di/store';
 export interface ProfileState {
   profile: Profile | null;
   articles: Article[];
-  articleType: 'profile' | 'favorited';
   statuses: Record<string, ApiStatus>;
 }
 
 export const initialProfileState: ProfileState = {
   profile: null,
   articles: [],
-  articleType: 'profile',
   statuses: {
     articles: 'idle',
     profile: 'idle',
   },
 };
 
-export type ProfileVm = Omit<ProfileState, 'statuses'> & {
+export type ProfileVm = Omit<ProfileState, 'statuses' | 'articles'> & {
   profileStatus: ApiStatus;
-  articlesStatus: ApiStatus;
   isOwner: boolean;
 };
 
@@ -60,7 +58,6 @@ export class ProfileStore
   readonly profile$ = this.select((s) => s.profile);
   readonly articles$ = this.select((s) => s.articles);
   readonly statuses$ = this.select((s) => s.statuses);
-  readonly articleType$ = this.select((s) => s.articleType);
 
   readonly profileStatus$ = this.select(
     this.statuses$,
@@ -72,19 +69,21 @@ export class ProfileStore
     (statuses) => statuses['articles']
   );
 
-  readonly vm$: Observable<ProfileVm> = this.select(
+  readonly articlesVm$: Observable<
+    Pick<ProfileState, 'articles'> & { articlesStatus: ApiStatus }
+  > = this.select(
+    this.articles$,
+    this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
+    (articles, articlesStatus) => ({ articles, articlesStatus })
+  );
+
+  readonly profileVm$: Observable<ProfileVm> = this.select(
     this.authStore.auth$,
     this.profile$,
-    this.articles$,
-    this.articleType$,
     this.profileStatus$.pipe(filter((status) => status !== 'idle')),
-    this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
-    (auth, profile, articles, articleType, profileStatus, articlesStatus) => ({
+    (auth, profile, profileStatus) => ({
       profile,
-      articles,
-      articleType,
       profileStatus,
-      articlesStatus,
       isOwner: auth.user?.username === profile?.username,
     }),
     { debounce: true }
@@ -96,10 +95,6 @@ export class ProfileStore
 
   ngrxOnStateInit() {
     this.getProfile(this.username$);
-    this.getArticles({
-      author: this.route.snapshot.params['username'],
-      isFavorited: false,
-    });
   }
 
   readonly getProfile = this.effect<string>(
@@ -122,20 +117,21 @@ export class ProfileStore
     )
   );
 
-  readonly getArticles = this.effect<{
-    author: string;
-    isFavorited: boolean;
-  }>(
+  readonly getArticles = this.effect<'my' | 'favorites'>(
     pipe(
-      tap(({ isFavorited }) => {
+      withLatestFrom(this.profile$),
+      tap(() => {
         this.setStatus({ key: 'articles', status: 'loading' });
-        this.patchState({ articleType: isFavorited ? 'favorited' : 'profile' });
       }),
-      switchMap(({ author, isFavorited }) =>
+      switchMap(([type, profile]) =>
         defer(() => {
-          if (isFavorited)
-            return this.apiClient.getArticles(undefined, undefined, author);
-          return this.apiClient.getArticles(undefined, author);
+          if (type === 'favorites')
+            return this.apiClient.getArticles(
+              undefined,
+              undefined,
+              profile?.username
+            );
+          return this.apiClient.getArticles(undefined, profile?.username);
         }).pipe(
           tapResponse(
             (response) => {

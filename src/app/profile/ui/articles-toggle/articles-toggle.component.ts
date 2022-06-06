@@ -1,10 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-articles-toggle',
@@ -14,8 +9,9 @@ import {
         <li class="nav-item">
           <a
             class="nav-link"
-            [class.active]="articlesType === 'profile'"
-            (click)="selectProfileArticles.emit()"
+            [routerLink]="['/profile', username]"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
           >
             My Articles
           </a>
@@ -23,8 +19,9 @@ import {
         <li class="nav-item">
           <a
             class="nav-link"
-            [class.active]="articlesType === 'favorited'"
-            (click)="selectFavoritedArticles.emit()"
+            [routerLink]="['/profile', username, 'favorites']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
           >
             Favorited Articles
           </a>
@@ -34,9 +31,8 @@ import {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  imports: [RouterModule],
 })
 export class ArticlesToggle {
-  @Input() articlesType: 'profile' | 'favorited' = 'profile';
-  @Output() selectProfileArticles = new EventEmitter();
-  @Output() selectFavoritedArticles = new EventEmitter();
+  @Input() username = '';
 }
