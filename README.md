@@ -1,27 +1,27 @@
-# NgConduit
+# ![RealWorld Example App](logo.png)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.0.
+> ### Angular 14 with Standalone Component codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
-## Development server
+### [Demo](https://ng-conduit.netlify.app/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+This codebase was created to demonstrate a fully fledged Front-end application built with **Angular 14 w/ Standalone Component** including CRUD operations, authentication, routing, pagination, and more.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+This is to explore and showcase how **Angular 14 w/ Standalone Component** would look like in a project.
 
-## Build
+For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+# How it works
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+> Describe the general architecture of your app here
 
-## Running end-to-end tests
+- All Components are authored with `standalone:true`
+- Experimenting with `inject()` instead of traditional Constructor DI
+- Using `@ngrx/component-store` as State Management solution
+- API SDK Stub is generated with [Nswag](http://nswag.org/)
+ 
+# Getting started
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- `pnpm install`
+- `npm run serve`
