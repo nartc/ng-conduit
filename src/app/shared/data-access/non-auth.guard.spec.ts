@@ -4,8 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Router, Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReplaySubject } from 'rxjs';
-import { AuthGuard } from './auth.guard';
 import { AuthStore } from './auth.store';
+import { NonAuthGuard } from './non-auth.guard';
 
 function testRouteGuard({
   routes,
@@ -16,7 +16,7 @@ function testRouteGuard({
   testUrl: string;
   type: string;
 }) {
-  describe(AuthGuard.name + `: ${type}`, () => {
+  describe(NonAuthGuard.name + `: ${type}`, () => {
     let isAuthenticated$: ReplaySubject<boolean>;
     let mockedAuthStore: jasmine.SpyObj<AuthStore>;
     let router: Router;
@@ -50,12 +50,12 @@ function testRouteGuard({
         canNavigate = await router.navigateByUrl(testUrl);
       });
 
-      it('should allow access', () => {
+      it('should follow through navigation', () => {
         expect(canNavigate).toEqual(true);
       });
 
-      it('should load component', () => {
-        expect(location.path()).toEqual(testUrl);
+      it('should redirect to /', () => {
+        expect(location.path()).toEqual('/');
       });
     });
 
@@ -67,12 +67,12 @@ function testRouteGuard({
         canNavigate = await router.navigateByUrl(testUrl);
       });
 
-      it('should follow through navigation', () => {
+      it('should allow access', () => {
         expect(canNavigate).toEqual(true);
       });
 
-      it('should redirect to /', () => {
-        expect(location.path()).toEqual('/');
+      it('should load component', () => {
+        expect(location.path()).toEqual('/target');
       });
     });
   });
@@ -101,22 +101,10 @@ testRouteGuard({
   routes: [
     {
       path: 'target',
-      canActivate: [AuthGuard],
+      canActivate: [NonAuthGuard],
       component: DummyTargetComponent,
     },
   ],
   testUrl: '/target',
   type: 'canActivate',
-});
-
-testRouteGuard({
-  routes: [
-    {
-      path: 'target',
-      canActivateChild: [AuthGuard],
-      children: [{ path: '', component: DummyTargetComponent }],
-    },
-  ],
-  testUrl: '/target',
-  type: 'canActivateChild',
 });
