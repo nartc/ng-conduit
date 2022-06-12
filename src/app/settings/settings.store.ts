@@ -24,8 +24,7 @@ export class SettingsStore extends ComponentStore<{}> {
       this.apiClient.updateCurrentUser({ user }).pipe(
         tapResponse(
           () => {
-            this.authStore.refresh();
-            void this.router.navigate(['/profile', user.username]);
+            this.authStore.authenticate(['/profile', user.username as string]);
           },
           (error) => {
             console.error('error updating settings: ', error);

@@ -42,8 +42,7 @@ export class RegisterStore extends ComponentStore<RegisterState> {
               response.user.token
             );
             this.localStorageService.setItem('ng-conduit-user', response.user);
-            this.authStore.refresh();
-            void this.router.navigate(['/']);
+            this.authStore.authenticate();
           },
           (error: { errors: Record<string, string[]> }) => {
             console.error('error registering new user: ', error);
