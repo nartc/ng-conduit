@@ -19,13 +19,6 @@ export class LocalStorageService {
     return item;
   }
 
-  getItemObject<TData extends object>(key: string): TData | null {
-    const item = this.getItem(key);
-
-    if (!item) return null;
-    return JSON.parse(item) as TData;
-  }
-
   setItem(key: string, data: unknown): void {
     if (!this.ls) return;
 
