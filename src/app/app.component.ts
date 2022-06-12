@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthStore } from './shared/data-access/auth.store';
-import { injectComponentStore } from './shared/di/store';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +11,7 @@ import { injectComponentStore } from './shared/di/store';
   imports: [RouterModule],
 })
 export class App {
-  private readonly authStore = injectComponentStore(AuthStore);
+  constructor(private authStore: AuthStore) {}
 
   ngOnInit() {
     this.authStore.init();

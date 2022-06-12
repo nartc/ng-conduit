@@ -1,12 +1,17 @@
 import { DOCUMENT } from '@angular/common';
-import { inject, InjectFlags } from '@angular/core';
+import { inject, InjectFlags, InjectionToken } from '@angular/core';
 
-export function injectLocalStorage(): Storage | null {
-  const document = inject(DOCUMENT, InjectFlags.Optional);
+export const LOCAL_STORAGE = new InjectionToken<Storage | null>(
+  'local storage',
+  {
+    factory: () => {
+      const document = inject(DOCUMENT, InjectFlags.Optional);
 
-  if (document?.defaultView) {
-    return document?.defaultView?.localStorage;
+      if (document?.defaultView) {
+        return document?.defaultView?.localStorage;
+      }
+
+      return null;
+    },
   }
-
-  return null;
-}
+);

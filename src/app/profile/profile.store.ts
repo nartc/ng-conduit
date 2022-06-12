@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   ComponentStore,
@@ -19,7 +19,6 @@ import {
 import { ApiClient, Article, Profile } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
-import { injectComponentStore } from '../shared/di/store';
 
 export interface ProfileState {
   profile: Profile | null;
@@ -41,15 +40,13 @@ export type ProfileVm = Omit<ProfileState, 'statuses' | 'articles'> & {
   isOwner: boolean;
 };
 
+export type ProfileArticlesType = 'my' | 'favorites';
+
 @Injectable()
 export class ProfileStore
   extends ComponentStore<ProfileState>
   implements OnStateInit
 {
-  private readonly apiClient = inject(ApiClient);
-  private readonly route = inject(ActivatedRoute);
-  private readonly authStore = injectComponentStore(AuthStore);
-
   readonly username$ = this.route.params.pipe(
     map((params) => params['username']),
     filter((username): username is string => username)
@@ -74,7 +71,8 @@ export class ProfileStore
   > = this.select(
     this.articles$,
     this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
-    (articles, articlesStatus) => ({ articles, articlesStatus })
+    (articles, articlesStatus) => ({ articles, articlesStatus }),
+    { debounce: true }
   );
 
   readonly profileVm$: Observable<ProfileVm> = this.select(
@@ -89,13 +87,25 @@ export class ProfileStore
     { debounce: true }
   );
 
-  constructor() {
+  constructor(
+    private apiClient: ApiClient,
+    private route: ActivatedRoute,
+    private authStore: AuthStore
+  ) {
     super(initialProfileState);
   }
 
   ngrxOnStateInit() {
     this.getProfile(this.username$);
   }
+
+  readonly updateArticle = this.updater<Article>((state, updated) => ({
+    ...state,
+    articles: state.articles.map((article) => {
+      if (article.slug === updated.slug) return updated;
+      return article;
+    }),
+  }));
 
   readonly getProfile = this.effect<string>(
     pipe(
@@ -117,7 +127,7 @@ export class ProfileStore
     )
   );
 
-  readonly getArticles = this.effect<'my' | 'favorites'>(
+  readonly getArticles = this.effect<ProfileArticlesType>(
     pipe(
       withLatestFrom(this.profile$),
       tap(() => {

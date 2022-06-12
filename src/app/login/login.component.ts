@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LoginUser } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
 import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { LoginStore } from './login.store';
@@ -56,15 +55,14 @@ import { LoginStore } from './login.store';
   providers: [LoginStore],
 })
 export class Login {
-  private readonly store = injectComponentStore(LoginStore);
-  private readonly fb = inject(FormBuilder);
-
   readonly loginErrors$ = this.store.loginErrors$;
 
   readonly form: TypedFormGroup<LoginUser> = this.fb.nonNullable.group({
     email: ['', [Validators.email]],
     password: [''],
   });
+
+  constructor(private store: LoginStore, private fb: FormBuilder) {}
 
   submit() {
     this.store.login(this.form.getRawValue());

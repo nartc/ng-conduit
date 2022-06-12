@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { provideProfileArticlesType } from './articles/articles.di';
 
 export const profileRoutes: Route[] = [
   {
@@ -7,17 +8,15 @@ export const profileRoutes: Route[] = [
     children: [
       {
         path: '',
+        providers: [provideProfileArticlesType('my')],
         loadComponent: () =>
-          import('./my-articles/my-articles.component').then(
-            (m) => m.MyArticles
-          ),
+          import('./articles/articles.component').then((m) => m.Articles),
       },
       {
         path: 'favorites',
+        providers: [provideProfileArticlesType('favorites')],
         loadComponent: () =>
-          import('./favorites-articles/favorites-articles.component').then(
-            (m) => m.FavoritesArticles
-          ),
+          import('./articles/articles.component').then((m) => m.Articles),
       },
     ],
   },

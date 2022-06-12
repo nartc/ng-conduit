@@ -11,7 +11,7 @@ import { ApiStatus } from '../../data-access/models';
 import { ArticlePreview } from '../article-preview/article-preview.component';
 
 @Component({
-  selector: 'app-articles[status]',
+  selector: 'app-articles-list[status]',
   template: `
     <ng-container *ngIf="status !== 'loading'; else loading">
       <ng-container *ngIf="articles.length > 0; else noArticles">
@@ -34,7 +34,7 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
   standalone: true,
   imports: [ArticlePreview, CommonModule],
 })
-export class Articles {
+export class ArticlesList {
   @Input() status!: ApiStatus;
   @Input() articles: Article[] = [];
 

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ComponentStore,
@@ -25,10 +25,6 @@ export class EditArticleStore
   extends ComponentStore<EditArticleState>
   implements OnStateInit
 {
-  private readonly apiClient = inject(ApiClient);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-
   readonly slug$ = this.select(
     this.route.params,
     (params) => params['slug'] as string
@@ -36,7 +32,11 @@ export class EditArticleStore
 
   readonly article$ = this.select((s) => s.article);
 
-  constructor() {
+  constructor(
+    private apiClient: ApiClient,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     super(initialEditArticleState);
   }
 

@@ -5,13 +5,13 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { inject, Injectable, Provider } from '@angular/core';
+import { Injectable, Provider } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private readonly localStorageService = inject(LocalStorageService);
+  constructor(private localStorageService: LocalStorageService) {}
 
   intercept(
     req: HttpRequest<unknown>,

@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Article } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
-import { Articles } from '../shared/ui/articles/articles.component';
+import { ArticlesList } from '../shared/ui/articles-list/articles-list.component';
 import { HomeStore } from './home.store';
 import { Banner } from './ui/banner/banner.component';
 import { FeedToggle } from './ui/feed-toggle/feed-toggle.component';
@@ -26,11 +25,11 @@ import { Tags } from './ui/tags/tags.component';
                 (selectFeed)="selectFeed()"
                 (selectGlobal)="selectGlobal()"
               ></app-feed-toggle>
-              <app-articles
+              <app-articles-list
                 [status]="vm.articlesStatus"
                 [articles]="vm.articles"
                 (toggleFavorite)="toggleFavorite($event)"
-              ></app-articles>
+              ></app-articles-list>
             </div>
 
             <div class="col-md-3">
@@ -49,11 +48,11 @@ import { Tags } from './ui/tags/tags.component';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [Banner, Tags, FeedToggle, Articles, CommonModule],
+  imports: [Banner, Tags, FeedToggle, ArticlesList, CommonModule],
   providers: [provideComponentStore(HomeStore)],
 })
 export class Home {
-  private readonly store = injectComponentStore(HomeStore);
+  constructor(private store: HomeStore) {}
 
   readonly vm$ = this.store.vm$;
 

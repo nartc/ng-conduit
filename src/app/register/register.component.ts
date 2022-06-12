@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NewUser } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
 import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { RegisterStore } from './register.store';
@@ -64,8 +63,7 @@ import { RegisterStore } from './register.store';
   providers: [RegisterStore],
 })
 export class Register {
-  private readonly store = injectComponentStore(RegisterStore);
-  private readonly fb = inject(FormBuilder);
+  constructor(private fb: FormBuilder, private store: RegisterStore) {}
 
   readonly registerErrors$ = this.store.registerErrors$;
 

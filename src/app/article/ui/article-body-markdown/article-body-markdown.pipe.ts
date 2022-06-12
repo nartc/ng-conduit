@@ -1,4 +1,4 @@
-import { inject, Pipe, PipeTransform, SecurityContext } from '@angular/core';
+import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { marked } from 'marked';
 
@@ -7,7 +7,7 @@ import { marked } from 'marked';
   name: 'markdown',
 })
 export class ArticleBodyMarkdown implements PipeTransform {
-  private readonly domSanitizer = inject(DomSanitizer);
+  constructor(private domSanitizer: DomSanitizer) {}
 
   transform(value: string): string {
     return this.domSanitizer.sanitize(

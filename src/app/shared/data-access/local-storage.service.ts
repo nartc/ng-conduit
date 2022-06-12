@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { injectLocalStorage } from '../di/storage';
+import { Inject, Injectable } from '@angular/core';
+import { LOCAL_STORAGE } from '../di/storage';
 
 @Injectable({ providedIn: 'root' })
 export class LocalStorageService {
-  private readonly ls = injectLocalStorage();
+  constructor(@Inject(LOCAL_STORAGE) private ls: Storage) {}
 
   getItem(key: string): string | null {
     if (!this.ls) {

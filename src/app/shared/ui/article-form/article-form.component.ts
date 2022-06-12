@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  inject,
   Input,
   Output,
 } from '@angular/core';
@@ -93,14 +92,14 @@ export class ArticleForm {
 
   @Output() articleSubmit = new EventEmitter<ArticleFormData>();
 
-  private readonly fb = inject(FormBuilder);
-
   readonly form: TypedFormGroup<ArticleFormData> = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
     description: ['', [Validators.required]],
     body: ['', [Validators.required]],
     tagList: [<string[]>[]],
   });
+
+  constructor(private fb: FormBuilder) {}
 
   submit() {
     this.articleSubmit.next(this.form.getRawValue());

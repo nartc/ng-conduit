@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthStore } from '../shared/data-access/auth.store';
-import { injectComponentStore } from '../shared/di/store';
 import { Footer } from './ui/footer/footer.component';
 import { Header } from './ui/header/header.component';
 
@@ -23,7 +22,7 @@ import { Header } from './ui/header/header.component';
   imports: [Header, Footer, RouterModule, CommonModule],
 })
 export class Layout {
-  private readonly authStore = injectComponentStore(AuthStore);
+  constructor(private authStore: AuthStore) {}
 
   readonly auth$ = this.authStore.auth$;
 }

@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FavoritesArticles } from './favorites-articles.component';
+import { ArticlesList } from './articles-list.component';
 
-describe(FavoritesArticles.name, () => {
-  let fixture: ComponentFixture<FavoritesArticles>;
+describe(ArticlesList.name, () => {
+  let fixture: ComponentFixture<ArticlesList>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FavoritesArticles);
+    fixture = TestBed.createComponent(ArticlesList);
   });
 
   it('should create component', () => {

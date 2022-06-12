@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ComponentStore,
@@ -25,7 +25,6 @@ import {
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
-import { injectComponentStore } from '../shared/di/store';
 
 export type CommentWithOwner = Comment & { isOwner: boolean };
 
@@ -52,11 +51,6 @@ export class ArticleStore
   extends ComponentStore<ArticleState>
   implements OnStateInit
 {
-  private readonly apiClient = inject(ApiClient);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly authStore = injectComponentStore(AuthStore);
-
   readonly slug$ = this.route.params.pipe(
     map((params) => params['slug']),
     filter((slug): slug is string => slug)
@@ -87,7 +81,12 @@ export class ArticleStore
     { debounce: true }
   );
 
-  constructor() {
+  constructor(
+    private apiClient: ApiClient,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authStore: AuthStore
+  ) {
     super(initialArticleState);
   }
 

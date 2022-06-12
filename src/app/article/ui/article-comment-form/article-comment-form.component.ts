@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  inject,
   Input,
   Output,
 } from '@angular/core';
@@ -43,7 +42,7 @@ export class ArticleCommentForm {
 
   @Output() comment = new EventEmitter<string>();
 
-  private readonly fb = inject(FormBuilder);
+  constructor(private fb: FormBuilder) {}
 
   readonly form: TypedFormGroup<{ comment: string }> =
     this.fb.nonNullable.group({

@@ -3,8 +3,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Profile as ApiProfile } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
-import { Articles } from '../shared/ui/articles/articles.component';
 import { ProfileStore } from './profile.store';
 import { ArticlesToggle } from './ui/articles-toggle/articles-toggle.component';
 import { UserInfo } from './ui/user-info/user-info.component';
@@ -35,10 +33,10 @@ import { UserInfo } from './ui/user-info/user-info.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   providers: [provideComponentStore(ProfileStore)],
-  imports: [UserInfo, ArticlesToggle, Articles, CommonModule, RouterModule],
+  imports: [UserInfo, ArticlesToggle, CommonModule, RouterModule],
 })
 export class Profile {
-  private readonly store = injectComponentStore(ProfileStore);
+  constructor(private store: ProfileStore) {}
 
   readonly vm$ = this.store.profileVm$;
 

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
-import { injectComponentStore } from '../shared/di/store';
 import {
   ArticleForm,
   ArticleFormData,
@@ -23,7 +22,7 @@ import { NewArticleStore } from './new-article.store';
   providers: [provideComponentStore(NewArticleStore)],
 })
 export class NewArticle {
-  private readonly store = injectComponentStore(NewArticleStore);
+  constructor(private store: NewArticleStore) {}
 
   articleSubmit({ title, tagList, description, body }: ArticleFormData) {
     this.store.createArticle({ title, body, description, tagList });

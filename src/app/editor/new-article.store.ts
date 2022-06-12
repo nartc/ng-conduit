@@ -1,18 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { exhaustMap, pipe, withLatestFrom } from 'rxjs';
 import { ApiClient, NewArticle } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
-import { injectComponentStore } from '../shared/di/store';
 
 @Injectable()
 export class NewArticleStore extends ComponentStore<{}> {
-  private readonly apiClient = inject(ApiClient);
-  private readonly router = inject(Router);
-  private readonly authStore = injectComponentStore(AuthStore);
-
-  constructor() {
+  constructor(
+    private apiClient: ApiClient,
+    private router: Router,
+    private authStore: AuthStore
+  ) {
     super({});
   }
 

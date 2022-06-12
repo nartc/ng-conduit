@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
-import { injectComponentStore } from '../../shared/di/store';
 import {
   ArticleForm,
   ArticleFormData,
@@ -26,7 +25,7 @@ import { EditArticleStore } from './edit-article.store';
   providers: [provideComponentStore(EditArticleStore)],
 })
 export class EditArticle {
-  private readonly store = injectComponentStore(EditArticleStore);
+  constructor(private store: EditArticleStore) {}
 
   readonly article$ = this.store.article$;
 

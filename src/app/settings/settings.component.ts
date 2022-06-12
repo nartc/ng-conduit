@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideComponentStore } from '@ngrx/component-store';
 import { tap } from 'rxjs';
 import { UpdateUser, User } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { SettingsStore } from './settings.store';
 
@@ -85,8 +84,7 @@ import { SettingsStore } from './settings.store';
   imports: [CommonModule, ReactiveFormsModule],
 })
 export class Settings {
-  private readonly store = injectComponentStore(SettingsStore);
-  private readonly fb = inject(FormBuilder);
+  constructor(private fb: FormBuilder, private store: SettingsStore) {}
 
   readonly form: TypedFormGroup<UpdateUser> = this.fb.nonNullable.group({});
   readonly vm$ = this.store.vm$.pipe(

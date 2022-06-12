@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   ComponentStore,
   OnStateInit,
@@ -22,7 +22,6 @@ import {
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
-import { injectComponentStore } from '../shared/di/store';
 
 export interface HomeState {
   articles: Article[];
@@ -54,9 +53,6 @@ export class HomeStore
   extends ComponentStore<HomeState>
   implements OnStateInit
 {
-  private readonly apiClient = inject(ApiClient);
-  private readonly authStore = injectComponentStore(AuthStore);
-
   readonly articles$ = this.select((s) => s.articles);
   readonly tags$ = this.select((s) => s.tags);
   readonly statuses$ = this.select((s) => s.statuses);
@@ -101,7 +97,7 @@ export class HomeStore
     { debounce: true }
   );
 
-  constructor() {
+  constructor(private apiClient: ApiClient, private authStore: AuthStore) {
     super(initialHomeState);
   }
 

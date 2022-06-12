@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Article as ApiArticle, Profile } from '../shared/data-access/api';
-import { injectComponentStore } from '../shared/di/store';
 import { ArticleStore, CommentWithOwner } from './article.store';
 import { ArticleBodyMarkdown } from './ui/article-body-markdown/article-body-markdown.pipe';
 import { ArticleCommentForm } from './ui/article-comment-form/article-comment-form.component';
@@ -90,7 +89,7 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
   providers: [provideComponentStore(ArticleStore)],
 })
 export class Article {
-  private readonly store = injectComponentStore(ArticleStore);
+  constructor(private store: ArticleStore) {}
 
   readonly vm$ = this.store.vm$;
 

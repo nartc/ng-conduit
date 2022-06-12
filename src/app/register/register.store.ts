@@ -1,11 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, NewUser } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { LocalStorageService } from '../shared/data-access/local-storage.service';
-import { injectComponentStore } from '../shared/di/store';
 import { processAuthErrors } from '../shared/utils/process-auth-errors';
 
 export interface RegisterState {
@@ -18,18 +17,18 @@ export const initialRegisterState: RegisterState = {
 
 @Injectable()
 export class RegisterStore extends ComponentStore<RegisterState> {
-  private readonly apiClient = inject(ApiClient);
-  private readonly localStorageService = inject(LocalStorageService);
-  private readonly router = inject(Router);
-  private readonly authStore = injectComponentStore(AuthStore);
-
   readonly errors$ = this.select((s) => s.errors);
 
   readonly registerErrors$ = this.select(this.errors$, processAuthErrors, {
     debounce: true,
   });
 
-  constructor() {
+  constructor(
+    private apiClient: ApiClient,
+    private localStorageService: LocalStorageService,
+    private router: Router,
+    private authStore: AuthStore
+  ) {
     super(initialRegisterState);
   }
 
