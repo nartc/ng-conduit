@@ -1,15 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { ArticleForm } from './article-form.component';
 
 describe(ArticleForm.name, () => {
-  let fixture: ComponentFixture<ArticleForm>;
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ArticleForm);
-  });
-
-  it('should create component', () => {
-    const component = fixture.componentInstance;
-    expect(component).toBeTruthy();
+  describe('Given article is provided', () => {
+    it('Then render component', async () => {
+      await render(ArticleForm);
+    });
   });
 });
