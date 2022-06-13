@@ -28,10 +28,8 @@ describe(App.name, () => {
 
   describe('When render', () => {
     it('Then render router-outlet', async () => {
-      const { fixture } = await setupAppRender();
-      const routerOutletElement = fixture.debugElement.query(
-        By.css('router-outlet')
-      );
+      const { debugElement } = await setupAppRender();
+      const routerOutletElement = debugElement.query(By.css('router-outlet'));
       expect(routerOutletElement).toBeTruthy();
     });
   });
