@@ -42,7 +42,7 @@ function testRouteGuard({
       location = TestBed.inject(Location);
     });
 
-    describe('when user is authenticated', () => {
+    describe('Given a user is authenticated', () => {
       let canNavigate: boolean;
 
       beforeEach(async () => {
@@ -50,16 +50,16 @@ function testRouteGuard({
         canNavigate = await router.navigateByUrl(testUrl);
       });
 
-      it('should allow access', () => {
+      it('Then allow access', () => {
         expect(canNavigate).toEqual(true);
       });
 
-      it('should load component', () => {
+      it('Then load component', () => {
         expect(location.path()).toEqual(testUrl);
       });
     });
 
-    describe('when user is not authenticated', () => {
+    describe('Given user is not authenticated', () => {
       let canNavigate: boolean;
 
       beforeEach(async () => {
@@ -67,11 +67,11 @@ function testRouteGuard({
         canNavigate = await router.navigateByUrl(testUrl);
       });
 
-      it('should follow through navigation', () => {
+      it('Then follow through navigation', () => {
         expect(canNavigate).toEqual(true);
       });
 
-      it('should redirect to /', () => {
+      it('Then redirect to /', () => {
         expect(location.path()).toEqual('/');
       });
     });
