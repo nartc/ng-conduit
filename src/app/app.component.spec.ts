@@ -1,36 +1,34 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { RouterTestingModule } from '@angular/router/testing';
+import { render } from '@testing-library/angular';
 import { App } from './app.component';
 import { AuthStore } from './shared/data-access/auth.store';
 
 describe(App.name, () => {
-  let fixture: ComponentFixture<App>;
   let mockedAuthStore: jasmine.SpyObj<AuthStore>;
 
-  beforeEach(() => {
+  async function setupAppRender() {
     mockedAuthStore = jasmine.createSpyObj(AuthStore.name, ['init']);
-
-    fixture = TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule],
+    return await render(App, {
       providers: [{ provide: AuthStore, useValue: mockedAuthStore }],
-    }).createComponent(App);
-  });
+    });
+  }
 
-  it('should create component', () => {
+  it('Then create component', async () => {
+    const { fixture } = await setupAppRender();
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 
-  it('should call authStore.init on component init', () => {
-    fixture.detectChanges();
-    expect(mockedAuthStore.init).toHaveBeenCalled();
+  describe('When component init', () => {
+    it('Then call authStore.init', async () => {
+      await setupAppRender();
+      expect(mockedAuthStore.init).toHaveBeenCalled();
+    });
   });
 
-  describe('render', () => {
-    it('should render router-outlet', () => {
-      fixture.detectChanges();
+  describe('When render', () => {
+    it('Then render router-outlet', async () => {
+      const { fixture } = await setupAppRender();
       const routerOutletElement = fixture.debugElement.query(
         By.css('router-outlet')
       );
