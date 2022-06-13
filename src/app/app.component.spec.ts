@@ -33,7 +33,7 @@ describe(App.name, () => {
   describe('When render', () => {
     it('Then render router-outlet', async () => {
       const rendered = await setupAppRender();
-      const routerOutletElement = rendered.fixture.debugElement.query(
+      const routerOutletElement = rendered.debugElement.query(
         By.css('router-outlet')
       );
       expect(routerOutletElement).toBeTruthy();
