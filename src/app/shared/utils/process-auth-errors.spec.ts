@@ -9,4 +9,19 @@ describe(processAuthErrors.name, () => {
       });
     });
   });
+
+  describe('Given errors', () => {
+    describe('When processAuthErrors()', () => {
+      it('Then return errors array and hasError: true', () => {
+        const expected = processAuthErrors({
+          email: ['required', 'invalid'],
+          password: ['too short'],
+        });
+        expect(expected).toEqual({
+          errors: ['email required', 'email invalid', 'password too short'],
+          hasError: true,
+        });
+      });
+    });
+  });
 });

@@ -52,7 +52,7 @@ export interface ArticleFormData {
             type="text"
             class="form-control"
             placeholder="Enter tags"
-            (keyup.enter)="addTag(tagInput)"
+            (keydown.enter)="addTag(tagInput)"
           />
           <div class="tag-list" *ngIf="form.value.tagList?.length">
             <span
@@ -102,7 +102,7 @@ export class ArticleForm {
   constructor(private fb: FormBuilder) {}
 
   submit() {
-    this.articleSubmit.next(this.form.getRawValue());
+    this.articleSubmit.emit(this.form.getRawValue());
   }
 
   addTag(tagInput: HTMLInputElement) {

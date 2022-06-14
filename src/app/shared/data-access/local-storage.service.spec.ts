@@ -45,6 +45,16 @@ describe(LocalStorageService.name, () => {
         const expected = service.getItem('item');
         expect(expected).toEqual('value');
       });
+
+      it('Then return localStorage.getItem value as object if item is object', () => {
+        const actual = { foo: 'bar' };
+        mockedLocalStorage.getItem
+          .withArgs('item')
+          .and.returnValue(JSON.stringify(actual));
+
+        const expected = service.getItem<{ foo: string }>('item');
+        expect(expected).toEqual(actual);
+      });
     });
 
     describe('When setItem', () => {

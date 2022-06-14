@@ -14,8 +14,12 @@ specifiers:
   '@angular/router': ^14.0.1
   '@ngrx/component-store': ~14.0.0-rc.0
   '@testing-library/angular': ~12.0.2
+  '@testing-library/dom': ~8.13.0
+  '@testing-library/jasmine-dom': ~1.2.0
+  '@testing-library/user-event': ~14.2.0
   '@types/jasmine': ~4.0.3
   '@types/marked': ~4.0.3
+  '@types/testing-library__jasmine-dom': ~1.0.3
   jasmine-core: ~4.2.0
   karma: ~6.3.20
   karma-chrome-launcher: ~3.1.1
@@ -50,8 +54,12 @@ devDependencies:
   '@angular/cli': 14.0.1
   '@angular/compiler-cli': 14.0.1_i7mptrj4d3nzaiobtlraaf6lfe
   '@testing-library/angular': 12.0.2_7w6hhbt27j2prrn4odh4nki56m
+  '@testing-library/dom': 8.13.0
+  '@testing-library/jasmine-dom': 1.2.0
+  '@testing-library/user-event': 14.2.0_tlwynutqiyp5mns3woioasuxnq
   '@types/jasmine': 4.0.3
   '@types/marked': 4.0.3
+  '@types/testing-library__jasmine-dom': 1.0.3
   jasmine-core: 4.2.0
   karma: 6.3.20
   karma-chrome-launcher: 3.1.1
@@ -243,6 +251,7 @@ packages:
     dependencies:
       '@angular/core': 14.0.1_rxjs@7.5.5+zone.js@0.11.5
       tslib: 2.4.0
+    dev: false
 
   /@angular/cli/14.0.1:
     resolution: {integrity: sha512-5NUfpHlIQ+BipsHIMHImP2bXu5nJcyr4sbs8Otf5ReCcqculJGfKwX0gYYgLfExbw1r4JtCTDggYanUcVgqkdw==}
@@ -285,6 +294,7 @@ packages:
       '@angular/core': 14.0.1_rxjs@7.5.5+zone.js@0.11.5
       rxjs: 7.5.5
       tslib: 2.4.0
+    dev: false
 
   /@angular/compiler-cli/14.0.1_i7mptrj4d3nzaiobtlraaf6lfe:
     resolution: {integrity: sha512-cDldWH5Xu+nscUw1B71Lt+//TylRqSP8lDRCXxdX0TJeAtxhWTn8TLDy+Cc+YRiccwtuVXQuyCrdeWCR5hJt+Q==}
@@ -321,6 +331,7 @@ packages:
     dependencies:
       '@angular/core': 14.0.1_rxjs@7.5.5+zone.js@0.11.5
       tslib: 2.4.0
+    dev: false
 
   /@angular/core/14.0.1_rxjs@7.5.5+zone.js@0.11.5:
     resolution: {integrity: sha512-72/VathVpDVEIm/T87eGF9Ng9JYOfrRVJCGhPwKvbIQZzCrg07acPwjDvtifkhKEKyMxLXv+F3bClr8WYP6c4Q==}
@@ -332,6 +343,7 @@ packages:
       rxjs: 7.5.5
       tslib: 2.4.0
       zone.js: 0.11.5
+    dev: false
 
   /@angular/forms/14.0.1_lj4a4hweyf2f6k4lhaa47j7obu:
     resolution: {integrity: sha512-QueehWD0ghfYw3TQS9DN62i6gnc+xLeJ6NFJ8fVfh9Ny4V9zFB24bUwBmwcIiZhkw/5G42tjcuUIDO9KlNtBbA==}
@@ -380,6 +392,7 @@ packages:
       '@angular/common': 14.0.1_sc2cxsu4vfcn33t2tbzpvm4ohe
       '@angular/core': 14.0.1_rxjs@7.5.5+zone.js@0.11.5
       tslib: 2.4.0
+    dev: false
 
   /@angular/router/14.0.1_lj4a4hweyf2f6k4lhaa47j7obu:
     resolution: {integrity: sha512-FtJIe7acU6MuxoBlrl33VHKKVxePgOGnyPkRrxEHxrq8Dw6Y9JkW45Nk1t54CjcEhkkmPgSuJ2h2Jfn2fa6Vcw==}
@@ -395,6 +408,7 @@ packages:
       '@angular/platform-browser': 14.0.1_apbfsfxj2cxp6brpypcrpqy75u
       rxjs: 7.5.5
       tslib: 2.4.0
+    dev: false
 
   /@assemblyscript/loader/0.10.1:
     resolution: {integrity: sha512-H71nDOOL8Y7kWRLqf6Sums+01Q5msqBW2KhDUTemh1tvY04eSkSXrK0uj/4mmY0Xr16/3zyZmsrxN7CKuRbNRg==}
@@ -1539,6 +1553,14 @@ packages:
       esutils: 2.0.3
     dev: true
 
+  /@babel/runtime-corejs3/7.18.3:
+    resolution: {integrity: sha512-l4ddFwrc9rnR+EJsHsh+TJ4A35YqQz/UqcjtlX2ov53hlJYG5CxtQmNZxyajwDVmCxwy++rtvGU5HazCK4W41Q==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      core-js-pure: 3.23.0
+      regenerator-runtime: 0.13.9
+    dev: true
+
   /@babel/runtime/7.17.9:
     resolution: {integrity: sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==}
     engines: {node: '>=6.9.0'}
@@ -1937,6 +1959,27 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
+  /@testing-library/jasmine-dom/1.2.0:
+    resolution: {integrity: sha512-GgXkbHt6O20yWAituKUxqHc2JydHILpGNSBO6ZBSyNxawA2v5FqHvgq8myXR3cClqMl54OUYDYWCMVCgVZRbGg==}
+    dependencies:
+      '@babel/runtime': 7.17.9
+      '@types/testing-library__jasmine-dom': 1.0.3
+      aria-query: 4.2.2
+      chalk: 4.1.2
+      css: 3.0.0
+      css.escape: 1.5.1
+      lodash: 4.17.21
+    dev: true
+
+  /@testing-library/user-event/14.2.0_tlwynutqiyp5mns3woioasuxnq:
+    resolution: {integrity: sha512-+hIlG4nJS6ivZrKnOP7OGsDu9Fxmryj9vCl8x0ZINtTJcCHs2zLsYif5GzuRiBF2ck5GZG2aQr7Msg+EHlnYVQ==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
+    dependencies:
+      '@testing-library/dom': 8.13.0
+    dev: true
+
   /@tootallnate/once/1.1.2:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
     engines: {node: '>= 6'}
@@ -2083,6 +2126,12 @@ packages:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
     dependencies:
       '@types/node': 17.0.42
+    dev: true
+
+  /@types/testing-library__jasmine-dom/1.0.3:
+    resolution: {integrity: sha512-5EdYMvXLBs8CJymNtersZcXlhTVUWb0Z3W5E57tjwglZrztCr8TXxfTqFj4fVAKDGb7YiFa/9AYrfu6N+thcdQ==}
+    dependencies:
+      '@types/jasmine': 4.0.3
     dev: true
 
   /@types/ws/8.5.3:
@@ -2385,6 +2434,14 @@ packages:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
     dependencies:
       sprintf-js: 1.0.3
+    dev: true
+
+  /aria-query/4.2.2:
+    resolution: {integrity: sha512-o/HelwhuKpTj/frsOsbNLNgnNGVIFsVP/SW2BSF14gVl7kAfMOJ6/8wUAUvG1R1NHKrfG+2sHZTu0yauT1qBrA==}
+    engines: {node: '>=6.0'}
+    dependencies:
+      '@babel/runtime': 7.17.9
+      '@babel/runtime-corejs3': 7.18.3
     dev: true
 
   /aria-query/5.0.0:
@@ -2961,6 +3018,11 @@ packages:
       semver: 7.0.0
     dev: true
 
+  /core-js-pure/3.23.0:
+    resolution: {integrity: sha512-ksjJc/xVTQzT2q6trPja2qWynMEaGO36rDui2SiqLPYab9TmPgT8nIVcre/yscviPCSweUdCDGKe4MsQA9w1zQ==}
+    requiresBuild: true
+    dev: true
+
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
     dev: true
@@ -3066,6 +3128,10 @@ packages:
   /css-what/6.1.0:
     resolution: {integrity: sha512-HTUrgRJ7r4dsZKU6GjmpfRK1O76h97Z8MfS1G0FozR+oF2kG6Vfe8JE6zwrkbxigziPHinCJ+gCPjA9EaBDtRw==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /css.escape/1.5.1:
+    resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
     dev: true
 
   /css/3.0.0:
@@ -3563,6 +3629,7 @@ packages:
       esbuild-windows-64: 0.14.38
       esbuild-windows-arm64: 0.14.38
     dev: true
+    optional: true
 
   /escalade/3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -7280,3 +7347,4 @@ packages:
     resolution: {integrity: sha512-D1/7VxEuQ7xk6z/kAROe4SUbd9CzxY4zOwVGnGHerd/SgLIVU5f4esDzQUsOCeArn933BZfWMKydH7l7dPEp0g==}
     dependencies:
       tslib: 2.4.0
+    dev: false

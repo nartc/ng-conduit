@@ -5,7 +5,9 @@ import { LOCAL_STORAGE } from '../di/storage';
 export class LocalStorageService {
   constructor(@Inject(LOCAL_STORAGE) private ls: Storage) {}
 
-  getItem(key: string): string | null {
+  getItem<TData = string>(
+    key: string
+  ): (TData extends object ? TData : string) | null {
     if (!this.ls) {
       return null;
     }
@@ -16,7 +18,16 @@ export class LocalStorageService {
       return null;
     }
 
-    return item;
+    try {
+      const parsed = JSON.parse(item);
+      if (typeof parsed === 'object') {
+        return parsed;
+      }
+
+      return item as TData extends object ? TData : string;
+    } catch (e) {
+      return item as TData extends object ? TData : string;
+    }
   }
 
   setItem(key: string, data: unknown): void {
