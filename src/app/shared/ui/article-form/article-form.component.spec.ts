@@ -1,6 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { render } from '@testing-library/angular';
+import { getByText, render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { getMockedArticle } from '../../../testing.spec';
 import { ArticleForm, ArticleFormData } from './article-form.component';
@@ -21,73 +21,107 @@ describe(ArticleForm.name, () => {
       });
     }
 
-    it('Then form should be rendered properly', async () => {
-      const { getByPlaceholderText, detectChanges, debugElement } =
-        await setupRender();
+    describe('When render', () => {
+      it('Then form controls should reflect value properly', async () => {
+        const { getByPlaceholderText, debugElement } = await setupRender();
 
-      detectChanges();
+        const titleInput = getByPlaceholderText(/Article Title/);
+        const descriptionInput = getByPlaceholderText(
+          /What's this article about/
+        );
+        const bodyInput = getByPlaceholderText(/Write your article/);
+        const tagsSpans = debugElement.queryAll(
+          By.css('.tag-pill.tag-default')
+        );
 
-      const titleInput = getByPlaceholderText(/Article Title/);
-      const descriptionInput = getByPlaceholderText(
-        /What's this article about/
-      );
-      const bodyInput = getByPlaceholderText(/Write your article/);
-      const tagsSpans = debugElement.queryAll(By.css('.tag-pill.tag-default'));
-
-      expect(titleInput).toHaveValue('');
-      expect(descriptionInput).toHaveValue('');
-      expect(bodyInput).toHaveValue('');
-      expect(tagsSpans.length).toEqual(0);
-    });
-
-    it('Then form should be editable', async () => {
-      const { getByPlaceholderText, detectChanges, fixture } =
-        await setupRender();
-
-      detectChanges();
-
-      const titleInput = getByPlaceholderText(/Article Title/);
-
-      await userEvent.clear(titleInput);
-      await userEvent.type(titleInput, 'updated article title');
-
-      expect(fixture.componentInstance.form.getRawValue()).toEqual({
-        title: 'updated article title',
-        description: '',
-        body: '',
-        tagList: [],
+        expect(titleInput).toHaveValue('');
+        expect(descriptionInput).toHaveValue('');
+        expect(bodyInput).toHaveValue('');
+        expect(tagsSpans.length).toEqual(0);
       });
-    });
 
-    it('Then articleSubmit should emit current form data on Publish click', async () => {
-      const { getByText, getByPlaceholderText, detectChanges, fixture } =
-        await setupRender();
+      describe('When edit', () => {
+        it('Then form should reflect input controls', async () => {
+          const { getByPlaceholderText, fixture } = await setupRender();
+          const titleInput = getByPlaceholderText(/Article Title/);
 
-      detectChanges();
+          await userEvent.clear(titleInput);
+          await userEvent.type(titleInput, 'updated article title');
 
-      const titleInput = getByPlaceholderText(/Article Title/);
-      const descriptionInput = getByPlaceholderText(
-        /What's this article about/
-      );
-      const bodyInput = getByPlaceholderText(/Write your article/);
-      const tagInput = getByPlaceholderText(/Enter tags/);
-      const publishButton = getByText(/Publish Article/);
+          expect(fixture.componentInstance.form.getRawValue()).toEqual({
+            title: 'updated article title',
+            description: '',
+            body: '',
+            tagList: [],
+          });
+        });
 
-      await userEvent.type(titleInput, 'title');
-      await userEvent.type(descriptionInput, 'description');
-      await userEvent.type(bodyInput, 'body');
+        it('Then adding tags should update tagList', async () => {
+          const { getByPlaceholderText, fixture } = await setupRender();
+          const tagInput = getByPlaceholderText(/Enter tags/);
 
-      await userEvent.type(tagInput, 'tag one');
-      await userEvent.keyboard('{Enter}');
+          await userEvent.type(tagInput, 'tag one');
+          await userEvent.keyboard('{Enter}');
+          await userEvent.type(tagInput, 'tag two');
+          await userEvent.keyboard('{Enter}');
 
-      // empty tagInput after adding tag
-      expect(tagInput).toHaveValue('');
+          expect(fixture.componentInstance.form.getRawValue().tagList).toEqual([
+            'tag one',
+            'tag two',
+          ]);
+        });
 
-      await userEvent.click(publishButton);
+        it('Then removing tags should update tagList', async () => {
+          const { getByPlaceholderText, getByText, fixture, debugElement } =
+            await setupRender();
+          const tagInput = getByPlaceholderText(/Enter tags/);
 
-      expect(mockedArticleSubmit.emit).toHaveBeenCalledWith(
-        fixture.componentInstance.form.getRawValue()
-      );
+          await userEvent.type(tagInput, 'tag one');
+          await userEvent.keyboard('{Enter}');
+
+          expect(fixture.componentInstance.form.getRawValue().tagList).toEqual([
+            'tag one',
+          ]);
+
+          const tagOneCloseIcon = debugElement.query(
+            By.css('.tag-pill.tag-default > i')
+          );
+          await userEvent.click(tagOneCloseIcon.nativeElement);
+
+          expect(fixture.componentInstance.form.getRawValue().tagList).toEqual(
+            []
+          );
+        });
+
+        it('Then articleSubmit should emit current form data on Publish click', async () => {
+          const { getByText, getByPlaceholderText, fixture } =
+            await setupRender();
+
+          const titleInput = getByPlaceholderText(/Article Title/);
+          const descriptionInput = getByPlaceholderText(
+            /What's this article about/
+          );
+          const bodyInput = getByPlaceholderText(/Write your article/);
+          const tagInput = getByPlaceholderText(/Enter tags/);
+          const publishButton = getByText(/Publish Article/);
+
+          await userEvent.type(titleInput, 'title');
+          await userEvent.type(descriptionInput, 'description');
+          await userEvent.type(bodyInput, 'body');
+
+          await userEvent.type(tagInput, 'tag one');
+          await userEvent.keyboard('{Enter}');
+
+          // empty tagInput after adding tag
+          expect(tagInput).toHaveValue('');
+
+          await userEvent.click(publishButton);
+
+          expect(mockedArticleSubmit.emit).toHaveBeenCalledWith(
+            fixture.componentInstance.form.getRawValue()
+          );
+        });
+      });
     });
   });
 
