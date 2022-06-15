@@ -44,6 +44,7 @@ import { Article, Profile } from '../../../shared/data-access/api';
         <button
           class="btn btn-sm btn-outline-secondary"
           (click)="followAuthor.emit(article.author)"
+          id="followAuthor"
         >
           <i class="ion-plus-round"></i>
           &nbsp; {{ article.author.following ? 'Unfollow' : 'Follow' }}
@@ -54,6 +55,7 @@ import { Article, Profile } from '../../../shared/data-access/api';
           class="btn btn-sm"
           [class.btn-outline-primary]="article.favorited"
           (click)="toggleFavorite.emit()"
+          id="toggleFavorite"
         >
           <i class="ion-heart"></i>
           &nbsp; {{ article.favorited ? 'Unfavorite' : 'Favorite' }} Post
