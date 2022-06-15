@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommentWithOwner } from '../../article.store';
+import { CommentWithOwner } from '../../../shared/data-access/models';
 
 @Component({
   selector: 'app-article-comment[comment]',
@@ -22,6 +22,7 @@ import { CommentWithOwner } from '../../article.store';
         <a
           [routerLink]="['/profile', comment.author.username]"
           class="comment-author"
+          id="authorAvatar"
         >
           <img
             [src]="comment.author.image"
@@ -33,6 +34,7 @@ import { CommentWithOwner } from '../../article.store';
         <a
           [routerLink]="['/profile', comment.author.username]"
           class="comment-author"
+          id="authorUsername"
         >
           {{ comment.author.username }}
         </a>

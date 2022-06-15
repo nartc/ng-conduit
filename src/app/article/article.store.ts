@@ -24,9 +24,7 @@ import {
   Profile,
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
-import { ApiStatus } from '../shared/data-access/models';
-
-export type CommentWithOwner = Comment & { isOwner: boolean };
+import { ApiStatus, CommentWithOwner } from '../shared/data-access/models';
 
 export interface ArticleState {
   article: Article | null;
