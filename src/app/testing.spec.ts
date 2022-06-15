@@ -15,8 +15,8 @@ export function getMockedArticle(
     profile,
     article,
   }: {
-    profile: Partial<Profile>;
-    article: Partial<Article>;
+    profile?: Partial<Profile>;
+    article?: Partial<Article>;
   } = { profile: {}, article: {} }
 ): Article {
   return {
