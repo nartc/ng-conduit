@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, LOCALE_ID } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
@@ -60,7 +60,6 @@ describe(ArticlePreview.name, () => {
 
     it('Then render article meta info', async () => {
       const { debugElement } = await setupRender(mockedArticle);
-
       const authorLink = debugElement.query(By.css('.info > .author'));
 
       expect(authorLink.nativeElement).toHaveAttribute(
@@ -72,8 +71,9 @@ describe(ArticlePreview.name, () => {
       );
 
       const dateSpan = debugElement.query(By.css('.info > .date'));
+      const locale = debugElement.injector.get(LOCALE_ID);
       expect(dateSpan.nativeElement).toHaveTextContent(
-        new DatePipe('en-US').transform(
+        new DatePipe(locale).transform(
           mockedArticle.updatedAt,
           'mediumDate'
         ) as string
