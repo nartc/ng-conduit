@@ -17,7 +17,7 @@ import {
             class="nav-link"
             [class.disabled]="isFeedDisabled"
             [class.active]="feedType === 'feed' && !selectedTag"
-            (click)="selectFeed.emit()"
+            (click)="!isFeedDisabled && selectFeed.emit()"
           >
             Your Feed
           </a>
