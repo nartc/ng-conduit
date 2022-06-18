@@ -11,7 +11,7 @@ import { ArticlesList } from './articles-list.component';
 describe(ArticlesList.name, () => {
   let mockedToggleFavorite: jasmine.SpyObj<EventEmitter<Article>>;
 
-  async function setupRender(status: ApiStatus, articles: Article[] = []) {
+  async function setup(status: ApiStatus, articles: Article[] = []) {
     mockedToggleFavorite = jasmine.createSpyObj('mocked toggle favorite', [
       'emit',
     ]);
@@ -27,7 +27,7 @@ describe(ArticlesList.name, () => {
 
   describe('Given status is loading', () => {
     it('Then render article-preview with loading text', async () => {
-      const { debugElement } = await setupRender('loading');
+      const { debugElement } = await setup('loading');
       const articlePreview = debugElement.query(By.directive(ArticlePreview));
       expect(articlePreview.nativeElement).toHaveTextContent(
         /Loading articles/
@@ -38,7 +38,7 @@ describe(ArticlesList.name, () => {
   describe('Given status is not loading', () => {
     describe('Given no articles', () => {
       it('Then render article-preview with No articles text', async () => {
-        const { debugElement } = await setupRender('success');
+        const { debugElement } = await setup('success');
         const articlePreview = debugElement.query(By.directive(ArticlePreview));
         expect(articlePreview.nativeElement).toHaveTextContent(
           /No articles are here/
@@ -56,7 +56,7 @@ describe(ArticlesList.name, () => {
       ];
 
       it('Then render correct number of article-preview', async () => {
-        const { debugElement } = await setupRender('success', mockedArticles);
+        const { debugElement } = await setup('success', mockedArticles);
         const articlePreviews = debugElement.queryAll(
           By.directive(ArticlePreview)
         );
@@ -77,7 +77,7 @@ describe(ArticlesList.name, () => {
       });
 
       it('Then toggleFavorite should emit the correct article', async () => {
-        const { debugElement } = await setupRender('success', mockedArticles);
+        const { debugElement } = await setup('success', mockedArticles);
         const articlePreviews = debugElement.queryAll(
           By.directive(ArticlePreview)
         );

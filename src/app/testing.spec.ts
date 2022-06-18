@@ -1,4 +1,4 @@
-import type { Article, Profile } from './shared/data-access/api';
+import type { Article, Comment, Profile, User } from './shared/data-access/api';
 import { CommentWithOwner } from './shared/data-access/models';
 
 export function getMockedProfile(profile: Partial<Profile> = {}): Profile {
@@ -8,6 +8,30 @@ export function getMockedProfile(profile: Partial<Profile> = {}): Profile {
     username: 'username',
     image: 'image',
     ...profile,
+  };
+}
+
+export function getMockedUser(user: Partial<User> = {}): User {
+  return {
+    bio: 'bio',
+    username: 'username',
+    image: 'image',
+    token: 'token',
+    email: 'email',
+    ...user,
+  };
+}
+
+export function getMockedArticleComment(
+  id: number,
+  profile: Partial<Profile> = {}
+): Comment {
+  return {
+    id,
+    createdAt: new Date('10/14/1991'),
+    updatedAt: new Date('10/14/1991'),
+    body: 'body',
+    author: getMockedProfile(profile),
   };
 }
 
@@ -39,18 +63,24 @@ export function getMockedCommentWithOwner(
   {
     profile,
     comment,
-  }: { profile?: Partial<Profile>; comment?: Partial<CommentWithOwner> } = {
-    profile: {},
+    authUser,
+  }: {
+    comment?: Partial<Comment>;
+    profile: Profile;
+    authUser: User;
+  } = {
     comment: {},
+    profile: getMockedProfile(),
+    authUser: getMockedUser(),
   }
 ): CommentWithOwner {
   return {
-    isOwner: false,
+    isOwner: profile.username === authUser.username,
     body: 'body',
     updatedAt: new Date('10/14/1991'),
     createdAt: new Date('10/14/1991'),
     id: 1,
     ...comment,
-    author: getMockedProfile(profile),
+    author: profile,
   };
 }

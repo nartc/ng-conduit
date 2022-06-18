@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { LOCAL_STORAGE } from '../di/storage';
 import { LocalStorageService } from './local-storage.service';
 
@@ -8,45 +8,54 @@ describe(LocalStorageService.name, () => {
   describe('Given with local storage', () => {
     let mockedLocalStorage: jasmine.SpyObj<Storage>;
 
-    beforeEach(() => {
+    async function setup() {
       mockedLocalStorage = jasmine.createSpyObj<Storage>('LocalStorage', [
         'getItem',
         'setItem',
         'removeItem',
       ]);
 
-      TestBed.configureTestingModule({
+      const { debugElement } = await render('', {
         providers: [
           { provide: LOCAL_STORAGE, useValue: mockedLocalStorage },
           LocalStorageService,
         ],
       });
 
-      service = TestBed.inject(LocalStorageService);
-    });
+      service = debugElement.injector.get(LocalStorageService);
+    }
 
-    it('Then create service instance', () => {
+    it('Then create service instance', async () => {
+      await setup();
       expect(service).toBeTruthy();
     });
 
     describe('When getItem', () => {
-      it('Then call localStorage.getItem', () => {
+      it('Then call localStorage.getItem', async () => {
+        await setup();
+
         service.getItem('item');
         expect(mockedLocalStorage.getItem).toHaveBeenCalledWith('item');
       });
 
-      it('Then return null if there is no item', () => {
+      it('Then return null if there is no item', async () => {
+        await setup();
+
         const expected = service.getItem('item');
         expect(expected).toEqual(null);
       });
 
-      it('Then return localStorage.getItem value if there is item', () => {
+      it('Then return localStorage.getItem value if there is item', async () => {
+        await setup();
+
         mockedLocalStorage.getItem.withArgs('item').and.returnValue('value');
         const expected = service.getItem('item');
         expect(expected).toEqual('value');
       });
 
-      it('Then return localStorage.getItem value as object if item is object', () => {
+      it('Then return localStorage.getItem value as object if item is object', async () => {
+        await setup();
+
         const actual = { foo: 'bar' };
         mockedLocalStorage.getItem
           .withArgs('item')
@@ -58,7 +67,9 @@ describe(LocalStorageService.name, () => {
     });
 
     describe('When setItem', () => {
-      it('Then set string item', () => {
+      it('Then set string item', async () => {
+        await setup();
+
         service.setItem('item', 'value');
         expect(mockedLocalStorage.setItem).toHaveBeenCalledWith(
           'item',
@@ -66,7 +77,9 @@ describe(LocalStorageService.name, () => {
         );
       });
 
-      it('Then call set object item', () => {
+      it('Then call set object item', async () => {
+        await setup();
+
         const obj = { foo: 'bar' };
         const stringifiedObj = JSON.stringify(obj);
 
@@ -79,7 +92,9 @@ describe(LocalStorageService.name, () => {
     });
 
     describe('When removeItem', () => {
-      it('Then call remove item', () => {
+      it('Then call remove item', async () => {
+        await setup();
+
         service.removeItem('item');
         expect(mockedLocalStorage.removeItem).toHaveBeenCalledWith('item');
       });

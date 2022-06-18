@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
-  ComponentStore,
-  OnStateInit,
-  tapResponse,
-} from '@ngrx/component-store';
-import {
-  defer,
   exhaustMap,
   filter,
   forkJoin,
+  iif,
   map,
   Observable,
   pipe,
@@ -45,10 +41,7 @@ export type ArticleVm = Omit<ArticleState, 'comments'> & {
 };
 
 @Injectable()
-export class ArticleStore
-  extends ComponentStore<ArticleState>
-  implements OnStateInit
-{
+export class ArticleStore extends ComponentStore<ArticleState> {
   readonly slug$ = this.route.params.pipe(
     map((params) => params['slug']),
     filter((slug): slug is string => slug)
@@ -92,7 +85,7 @@ export class ArticleStore
     this.getArticle(this.slug$);
   }
 
-  readonly getArticle = this.effect<string>(
+  private readonly getArticle = this.effect<string>(
     pipe(
       tap(() => this.patchState({ status: 'loading' })),
       switchMap((slug) =>
@@ -116,11 +109,11 @@ export class ArticleStore
 
   readonly toggleFavorite = this.effect<Article>(
     exhaustMap((article) =>
-      defer(() => {
-        if (article.favorited)
-          return this.apiClient.deleteArticleFavorite(article.slug);
-        return this.apiClient.createArticleFavorite(article.slug);
-      }).pipe(
+      iif(
+        () => article.favorited,
+        this.apiClient.deleteArticleFavorite(article.slug),
+        this.apiClient.createArticleFavorite(article.slug)
+      ).pipe(
         tapResponse(
           (response) => {
             this.patchState({ article: response.article });
@@ -150,11 +143,11 @@ export class ArticleStore
 
   readonly toggleFollowAuthor = this.effect<Profile>(
     exhaustMap((profile) =>
-      defer(() => {
-        if (profile.following)
-          return this.apiClient.unfollowUserByUsername(profile.username);
-        return this.apiClient.followUserByUsername(profile.username);
-      }).pipe(
+      iif(
+        () => profile.following,
+        this.apiClient.unfollowUserByUsername(profile.username),
+        this.apiClient.followUserByUsername(profile.username)
+      ).pipe(
         tapResponse(
           (response) => {
             this.patchState((state) => ({

@@ -14,7 +14,7 @@ describe(ArticleMeta.name, () => {
 
   let mockedArticle: Article;
 
-  async function setupRender(
+  async function setup(
     isOwner = false,
     article: Parameters<typeof getMockedArticle>[0] = {}
   ) {
@@ -38,7 +38,7 @@ describe(ArticleMeta.name, () => {
   }
 
   it('Then render avatar of article author', async () => {
-    const { debugElement, getByAltText } = await setupRender();
+    const { debugElement, getByAltText } = await setup();
 
     const avatarLink = debugElement.query(By.css('.article-meta > a'));
 
@@ -52,7 +52,7 @@ describe(ArticleMeta.name, () => {
   });
 
   it('Then render article info', async () => {
-    const { debugElement } = await setupRender();
+    const { debugElement } = await setup();
 
     const authorLink = debugElement.query(By.css('.author'));
 
@@ -73,7 +73,7 @@ describe(ArticleMeta.name, () => {
 
   describe('Given is article owner', () => {
     it('Then render edit article link', async () => {
-      const { debugElement } = await setupRender(true);
+      const { debugElement } = await setup(true);
 
       const editArticleLink = debugElement.query(
         By.css('.btn.btn-outline-secondary')
@@ -87,7 +87,7 @@ describe(ArticleMeta.name, () => {
     });
 
     it('Then render delete article button', async () => {
-      const { debugElement } = await setupRender(true);
+      const { debugElement } = await setup(true);
 
       const deleteArticleButton = debugElement.query(
         By.css('.btn.btn-outline-danger')
@@ -100,7 +100,7 @@ describe(ArticleMeta.name, () => {
 
     describe('When click delete', () => {
       it('Then delete output emits', async () => {
-        const { debugElement } = await setupRender(true);
+        const { debugElement } = await setup(true);
 
         const deleteArticleButton = debugElement.query(
           By.css('.btn.btn-outline-danger')
@@ -115,7 +115,7 @@ describe(ArticleMeta.name, () => {
 
   describe('Given is not article owner', () => {
     it('Then render follow author button', async () => {
-      const { debugElement } = await setupRender(false);
+      const { debugElement } = await setup(false);
 
       const followAuthorButton = debugElement.query(By.css('#followAuthor'));
       expect(followAuthorButton.nativeElement).toHaveTextContent(
@@ -125,7 +125,7 @@ describe(ArticleMeta.name, () => {
 
     describe('When click follow/unfollow', () => {
       it('Then followAuthor output emits with the article author', async () => {
-        const { debugElement } = await setupRender(false);
+        const { debugElement } = await setup(false);
         const followAuthorButton = debugElement.query(By.css('#followAuthor'));
 
         await userEvent.click(followAuthorButton.nativeElement);
@@ -137,7 +137,7 @@ describe(ArticleMeta.name, () => {
     });
 
     it('Then render toggle favorite button', async () => {
-      const { debugElement } = await setupRender(false);
+      const { debugElement } = await setup(false);
 
       const toggleFavoriteButton = debugElement.query(
         By.css('#toggleFavorite')
@@ -151,7 +151,7 @@ describe(ArticleMeta.name, () => {
 
     describe('When click toggleFavorite', () => {
       it('Then toggleFavorite output emits', async () => {
-        const { debugElement } = await setupRender(false);
+        const { debugElement } = await setup(false);
 
         const toggleFavoriteButton = debugElement.query(
           By.css('#toggleFavorite')
@@ -165,7 +165,7 @@ describe(ArticleMeta.name, () => {
 
     describe('Given author that has already been followed', () => {
       it('Then render Unfollow button', async () => {
-        const { debugElement } = await setupRender(false, {
+        const { debugElement } = await setup(false, {
           profile: { following: true },
         });
 
@@ -177,7 +177,7 @@ describe(ArticleMeta.name, () => {
     });
     describe('Given author that has not been followed', () => {
       it('Then render Follow button', async () => {
-        const { debugElement } = await setupRender(false, {
+        const { debugElement } = await setup(false, {
           profile: { following: false },
         });
         const followAuthorButton = debugElement.query(By.css('#followAuthor'));
@@ -188,7 +188,7 @@ describe(ArticleMeta.name, () => {
     });
     describe('Given article that has already been favorited', () => {
       it('Then render Unfavorite button', async () => {
-        const { debugElement } = await setupRender(false, {
+        const { debugElement } = await setup(false, {
           article: { favorited: true },
         });
 
@@ -203,7 +203,7 @@ describe(ArticleMeta.name, () => {
     });
     describe('Given article that has not been favorited', () => {
       it('Then render Favorite button', async () => {
-        const { debugElement } = await setupRender(false, {
+        const { debugElement } = await setup(false, {
           article: { favorited: false },
         });
 

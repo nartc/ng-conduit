@@ -16,7 +16,7 @@ class TestDummy {
 }
 
 describe(ArticleBodyMarkdown.name, () => {
-  async function setupRender(content: string) {
+  async function setup(content: string) {
     return await render(TestDummy, {
       componentProperties: { content },
     });
@@ -24,7 +24,7 @@ describe(ArticleBodyMarkdown.name, () => {
 
   describe('Given empty content', () => {
     it('Then render empty innerHTML', async () => {
-      const { debugElement } = await setupRender('');
+      const { debugElement } = await setup('');
       const contentDiv = debugElement.query(By.css('.content'));
       expect(contentDiv.nativeElement).toHaveTextContent('');
     });
@@ -32,7 +32,7 @@ describe(ArticleBodyMarkdown.name, () => {
 
   describe('Given valid markdown content', () => {
     it('Then render valid html', async () => {
-      const { debugElement } = await setupRender(`**bold** and _italic_`);
+      const { debugElement } = await setup(`**bold** and _italic_`);
       const contentDiv = debugElement.query(By.css('.content'));
 
       const transformedParagraph = contentDiv.query(By.css('p'));
@@ -48,7 +48,7 @@ describe(ArticleBodyMarkdown.name, () => {
 
   describe('Given malicious content', () => {
     it('Then render with sanitized content', async () => {
-      const { debugElement } = await setupRender(
+      const { debugElement } = await setup(
         `**this is malicious** <script>alert("malicious")</script>`
       );
 

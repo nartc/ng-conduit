@@ -32,7 +32,10 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
           <div class="container page">
             <div class="row article-content">
               <div class="col-md-12">
-                <div [innerHTML]="vm.article.body | markdown"></div>
+                <div
+                  class="body"
+                  [innerHTML]="vm.article.body | markdown"
+                ></div>
                 <ul *ngIf="vm.article.tagList.length > 0" class="tag-list">
                   <li
                     class="tag-default tag-pill tag-outline ng-binding ng-scope"

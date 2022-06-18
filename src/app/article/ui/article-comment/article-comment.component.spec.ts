@@ -10,7 +10,7 @@ import { ArticleComment } from './article-comment.component';
 describe(ArticleComment.name, () => {
   let mockedDelete: jasmine.SpyObj<EventEmitter<void>>;
 
-  async function setupRender(comment: CommentWithOwner) {
+  async function setup(comment: CommentWithOwner) {
     mockedDelete = jasmine.createSpyObj('mocked delete', ['emit']);
 
     return await render(ArticleComment, {
@@ -25,12 +25,12 @@ describe(ArticleComment.name, () => {
     const mockedComment = getMockedCommentWithOwner();
 
     it('Then render comment body', async () => {
-      const { getByText } = await setupRender(mockedComment);
+      const { getByText } = await setup(mockedComment);
       expect(getByText(mockedComment.body)).toBeTruthy();
     });
 
     it('Then render comment footer without mod options', async () => {
-      const { debugElement } = await setupRender(mockedComment);
+      const { debugElement } = await setup(mockedComment);
 
       const authorAvatarLink = debugElement.query(
         By.css('.comment-author#authorAvatar')
@@ -74,12 +74,10 @@ describe(ArticleComment.name, () => {
   });
 
   describe('Given a comment that is owned', () => {
-    const mockedComment = getMockedCommentWithOwner({
-      comment: { isOwner: true },
-    });
+    const mockedComment = getMockedCommentWithOwner();
 
     it('Then render footer with mod options', async () => {
-      const { debugElement } = await setupRender(mockedComment);
+      const { debugElement } = await setup(mockedComment);
 
       const modOptionsSpan = debugElement.query(By.css('.mod-options'));
       expect(modOptionsSpan).toBeTruthy();
@@ -87,7 +85,7 @@ describe(ArticleComment.name, () => {
 
     describe('When click delete', () => {
       it('Then emit with delete output', async () => {
-        const { debugElement } = await setupRender(mockedComment);
+        const { debugElement } = await setup(mockedComment);
 
         const modOptionsSpan = debugElement.query(By.css('.mod-options'));
         const deleteIcon = modOptionsSpan.query(By.css('i'));

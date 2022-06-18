@@ -1,6 +1,6 @@
-import { fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
+import { render } from '@testing-library/angular';
 import { of, take } from 'rxjs';
 import { ApiClient, Profile, User } from './api';
 import { AuthStore } from './auth.store';
@@ -13,7 +13,7 @@ describe(AuthStore.name, () => {
   let mockedLocalStorageService: jasmine.SpyObj<LocalStorageService>;
   let mockedRouter: jasmine.SpyObj<Router>;
 
-  beforeEach(() => {
+  async function setup() {
     mockedApiClient = jasmine.createSpyObj<ApiClient>(ApiClient.name, [
       'getCurrentUser',
       'getProfileByUsername',
@@ -24,7 +24,7 @@ describe(AuthStore.name, () => {
     );
     mockedRouter = jasmine.createSpyObj<Router>(Router.name, ['navigate']);
 
-    TestBed.configureTestingModule({
+    const { debugElement } = await render('', {
       providers: [
         { provide: ApiClient, useValue: mockedApiClient },
         { provide: LocalStorageService, useValue: mockedLocalStorageService },
@@ -33,35 +33,47 @@ describe(AuthStore.name, () => {
       ],
     });
 
-    store = TestBed.inject(AuthStore);
-  });
+    store = debugElement.injector.get(AuthStore);
+  }
 
-  it('should create store instance', () => {
+  it('should create store instance', async () => {
+    await setup();
     expect(store).toBeTruthy();
   });
 
   describe('Given not logged in', () => {
     describe('When init', () => {
-      beforeEach(() => {
+      function act() {
         store.init();
-      });
+      }
 
-      it('Then call localStorage.getItem', () => {
+      it('Then call localStorage.getItem', async () => {
+        await setup();
+        act();
+
         expect(mockedLocalStorageService.getItem).toHaveBeenCalledWith(
           'ng-conduit-token'
         );
       });
 
-      it('Then not call apiClient.getCurrentUser', () => {
+      it('Then not call apiClient.getCurrentUser', async () => {
+        await setup();
+        act();
+
         expect(mockedApiClient.getCurrentUser).not.toHaveBeenCalled();
       });
 
-      it('Then not call apiClient.getProfileByUsername', () => {
+      it('Then not call apiClient.getProfileByUsername', async () => {
+        await setup();
+        act();
+
         expect(mockedApiClient.getProfileByUsername).not.toHaveBeenCalled();
       });
 
-      it('Then be unauthenticated', fakeAsync(() => {
-        flushMicrotasks();
+      it('Then be unauthenticated', async () => {
+        await setup();
+        act();
+
         store.isAuthenticated$.pipe(take(1)).subscribe((isAuthenticated) => {
           expect(isAuthenticated).toBeFalse();
         });
@@ -73,25 +85,32 @@ describe(AuthStore.name, () => {
             profile: null,
           });
         });
-      }));
+      });
     });
 
     describe('When authenticate', () => {
-      beforeEach(() => {
+      function act() {
         store.authenticate();
-      });
+      }
 
-      it('Then call localStorage.getItem', () => {
+      it('Then call localStorage.getItem', async () => {
+        await setup();
+        act();
+
         expect(mockedLocalStorageService.getItem).toHaveBeenCalledWith(
           'ng-conduit-token'
         );
       });
 
-      it('Then not call apiClient.getCurrentUser', () => {
+      it('Then not call apiClient.getCurrentUser', async () => {
+        await setup();
+        act();
         expect(mockedApiClient.getCurrentUser).not.toHaveBeenCalled();
       });
 
-      it('Then call router.navigate', () => {
+      it('Then call router.navigate', async () => {
+        await setup();
+        act();
         expect(mockedRouter.navigate).toHaveBeenCalledWith(['/']);
       });
     });
@@ -113,7 +132,7 @@ describe(AuthStore.name, () => {
       following: false,
     };
 
-    beforeEach(() => {
+    function arrange() {
       mockedLocalStorageService.getItem
         .withArgs('ng-conduit-token')
         .and.returnValue(currentUser.token);
@@ -122,38 +141,56 @@ describe(AuthStore.name, () => {
       mockedApiClient.getProfileByUsername
         .withArgs(currentUser.username)
         .and.returnValue(of({ profile: currentUserProfile }));
-    });
+    }
 
     describe('When init', () => {
-      beforeEach(() => {
+      function act() {
         store.init();
-      });
+      }
 
-      it('Then call localStorage.getItem', () => {
+      it('Then call localStorage.getItem', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedLocalStorageService.getItem).toHaveBeenCalledWith(
           'ng-conduit-token'
         );
       });
 
-      it('Then call apiClient.getCurrentUser', () => {
+      it('Then call apiClient.getCurrentUser', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedApiClient.getCurrentUser).toHaveBeenCalled();
       });
 
-      it('Then call apiClient.getProfileByUsername', () => {
+      it('Then call apiClient.getProfileByUsername', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedApiClient.getProfileByUsername).toHaveBeenCalledWith(
           currentUser.username
         );
       });
 
-      it('Then call localStorage.setItem with currentUser', () => {
+      it('Then call localStorage.setItem with currentUser', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedLocalStorageService.setItem).toHaveBeenCalledWith(
           'ng-conduit-user',
           currentUser
         );
       });
 
-      it('Then be authenticated', fakeAsync(() => {
-        flushMicrotasks();
+      it('Then be authenticated', async () => {
+        await setup();
+        arrange();
+        act();
 
         store.auth$.pipe(take(1)).subscribe((auth) => {
           expect(auth).toEqual({
@@ -162,33 +199,47 @@ describe(AuthStore.name, () => {
             profile: currentUserProfile,
           });
         });
-      }));
+      });
     });
 
     describe('When authenticate', () => {
-      beforeEach(() => {
+      function act() {
         store.authenticate();
-      });
+      }
 
-      it('Then call localStorage.getItem', () => {
+      it('Then call localStorage.getItem', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedLocalStorageService.getItem).toHaveBeenCalledWith(
           'ng-conduit-token'
         );
       });
 
-      it('Then call apiClient.getCurrentUser', () => {
+      it('Then call apiClient.getCurrentUser', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedApiClient.getCurrentUser).toHaveBeenCalled();
       });
 
-      it('Then call localStorage.setItem with currentUser', () => {
+      it('Then call localStorage.setItem with currentUser', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedLocalStorageService.setItem).toHaveBeenCalledWith(
           'ng-conduit-user',
           currentUser
         );
       });
 
-      it('Then be authenticated', fakeAsync(() => {
-        flushMicrotasks();
+      it('Then be authenticated', async () => {
+        await setup();
+        arrange();
+        act();
 
         store.auth$.pipe(take(1)).subscribe((auth) => {
           expect(auth).toEqual({
@@ -197,39 +248,56 @@ describe(AuthStore.name, () => {
             profile: null,
           });
         });
-      }));
+      });
 
-      it('Then call router.navigate', () => {
+      it('Then call router.navigate', async () => {
+        await setup();
+        arrange();
+        act();
+
         expect(mockedRouter.navigate).toHaveBeenCalledWith(['/']);
       });
     });
   });
 
   describe('When logout', () => {
-    beforeEach(() => {
+    function act() {
       store.logout();
-    });
+    }
 
-    it('Then call localStorage.removeItem', () => {
+    it('Then call localStorage.removeItem', async () => {
+      await setup();
+      act();
+
       expect(mockedLocalStorageService.removeItem).toHaveBeenCalledTimes(2);
     });
 
-    it('Then call localStorage.getItem', () => {
+    it('Then call localStorage.getItem', async () => {
+      await setup();
+      act();
+
       expect(mockedLocalStorageService.getItem).toHaveBeenCalledWith(
         'ng-conduit-token'
       );
     });
 
-    it('Then not call apiClient.getCurrentUser', () => {
+    it('Then not call apiClient.getCurrentUser', async () => {
+      await setup();
+      act();
+
       expect(mockedApiClient.getCurrentUser).not.toHaveBeenCalled();
     });
 
-    it('Then redirect to /', () => {
+    it('Then redirect to /', async () => {
+      await setup();
+      act();
+
       expect(mockedRouter.navigate).toHaveBeenCalledWith(['/']);
     });
 
-    it('Then be unauthenticated', fakeAsync(() => {
-      flushMicrotasks();
+    it('Then be unauthenticated', async () => {
+      await setup();
+      act();
 
       store.auth$.pipe(take(1)).subscribe((auth) => {
         expect(auth).toEqual({
@@ -238,6 +306,6 @@ describe(AuthStore.name, () => {
           profile: null,
         });
       });
-    }));
+    });
   });
 });

@@ -10,7 +10,7 @@ describe(ArticleCommentForm.name, () => {
   let mockedComment: jasmine.SpyObj<EventEmitter<string>>;
   let mockedCurrentUser: Profile;
 
-  async function setupRender() {
+  async function setup() {
     mockedCurrentUser = getMockedProfile();
     mockedComment = jasmine.createSpyObj('mocked comment', ['emit']);
     return await render(ArticleCommentForm, {
@@ -22,13 +22,13 @@ describe(ArticleCommentForm.name, () => {
   }
 
   it('Then render form control properly', async () => {
-    const { getByPlaceholderText } = await setupRender();
+    const { getByPlaceholderText } = await setup();
 
     expect(getByPlaceholderText(/Write a comment/)).toBeTruthy();
   });
 
   it('Then render form footer', async () => {
-    const { getByAltText, debugElement } = await setupRender();
+    const { getByAltText, debugElement } = await setup();
 
     const currentUserImage = getByAltText(/Avatar of current user/);
     expect(currentUserImage).toHaveAttribute('src', mockedCurrentUser.image);
@@ -39,7 +39,7 @@ describe(ArticleCommentForm.name, () => {
 
   describe('When edit', () => {
     it('Then form should have updated value from comment textarea', async () => {
-      const { getByPlaceholderText, fixture } = await setupRender();
+      const { getByPlaceholderText, fixture } = await setup();
 
       const textareaControl = getByPlaceholderText(/Write a comment/);
 
@@ -53,7 +53,7 @@ describe(ArticleCommentForm.name, () => {
 
   describe('When submit', () => {
     it('Then comment should emit textarea value', async () => {
-      const { getByPlaceholderText, debugElement } = await setupRender();
+      const { getByPlaceholderText, debugElement } = await setup();
 
       const textareaControl = getByPlaceholderText(/Write a comment/);
       await userEvent.type(textareaControl, 'comment');
@@ -65,8 +65,7 @@ describe(ArticleCommentForm.name, () => {
     });
 
     it('Then form should be reset', async () => {
-      const { getByPlaceholderText, debugElement, fixture } =
-        await setupRender();
+      const { getByPlaceholderText, debugElement, fixture } = await setup();
 
       const textareaControl = getByPlaceholderText(/Write a comment/);
       await userEvent.type(textareaControl, 'comment');

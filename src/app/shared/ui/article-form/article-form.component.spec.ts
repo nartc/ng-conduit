@@ -9,7 +9,7 @@ describe(ArticleForm.name, () => {
   let mockedArticleSubmit: jasmine.SpyObj<EventEmitter<ArticleFormData>>;
 
   describe('Given no article is provided', async () => {
-    async function setupRender() {
+    async function setup() {
       mockedArticleSubmit = jasmine.createSpyObj('mocked article submit', [
         'emit',
       ]);
@@ -23,7 +23,7 @@ describe(ArticleForm.name, () => {
 
     describe('When render', () => {
       it('Then form controls should reflect value properly', async () => {
-        const { getByPlaceholderText, debugElement } = await setupRender();
+        const { getByPlaceholderText, debugElement } = await setup();
 
         const titleInput = getByPlaceholderText(/Article Title/);
         const descriptionInput = getByPlaceholderText(
@@ -42,7 +42,7 @@ describe(ArticleForm.name, () => {
 
       describe('When edit', () => {
         it('Then form should reflect input controls', async () => {
-          const { getByPlaceholderText, fixture } = await setupRender();
+          const { getByPlaceholderText, fixture } = await setup();
           const titleInput = getByPlaceholderText(/Article Title/);
 
           await userEvent.clear(titleInput);
@@ -57,7 +57,7 @@ describe(ArticleForm.name, () => {
         });
 
         it('Then adding tags should update tagList', async () => {
-          const { getByPlaceholderText, fixture } = await setupRender();
+          const { getByPlaceholderText, fixture } = await setup();
           const tagInput = getByPlaceholderText(/Enter tags/);
 
           await userEvent.type(tagInput, 'tag one');
@@ -73,7 +73,7 @@ describe(ArticleForm.name, () => {
 
         it('Then removing tags should update tagList', async () => {
           const { getByPlaceholderText, getByText, fixture, debugElement } =
-            await setupRender();
+            await setup();
           const tagInput = getByPlaceholderText(/Enter tags/);
 
           await userEvent.type(tagInput, 'tag one');
@@ -94,8 +94,7 @@ describe(ArticleForm.name, () => {
         });
 
         it('Then articleSubmit should emit current form data on Publish click', async () => {
-          const { getByText, getByPlaceholderText, fixture } =
-            await setupRender();
+          const { getByText, getByPlaceholderText, fixture } = await setup();
 
           const titleInput = getByPlaceholderText(/Article Title/);
           const descriptionInput = getByPlaceholderText(
@@ -128,7 +127,7 @@ describe(ArticleForm.name, () => {
   describe('Given article is provided', async () => {
     const mockedArticle = getMockedArticle();
 
-    async function setupRender() {
+    async function setup() {
       mockedArticleSubmit = jasmine.createSpyObj('mocked article submit', [
         'emit',
       ]);
@@ -142,7 +141,7 @@ describe(ArticleForm.name, () => {
     }
 
     it('Then form initial value should be the provided article', async () => {
-      const { fixture } = await setupRender();
+      const { fixture } = await setup();
 
       expect(fixture.componentInstance.form.getRawValue()).toEqual({
         title: mockedArticle.title,

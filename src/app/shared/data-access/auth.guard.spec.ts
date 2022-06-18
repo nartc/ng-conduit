@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import { Router, Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { render } from '@testing-library/angular';
 import { ReplaySubject } from 'rxjs';
 import { AuthGuard } from './auth.guard';
 import { AuthStore } from './auth.store';
@@ -22,13 +22,13 @@ function testRouteGuard({
     let router: Router;
     let location: Location;
 
-    beforeEach(() => {
+    async function setup() {
       isAuthenticated$ = new ReplaySubject<boolean>(1);
       mockedAuthStore = jasmine.createSpyObj<AuthStore>(AuthStore.name, [], {
         isAuthenticated$,
       });
 
-      TestBed.configureTestingModule({
+      const { debugElement } = await render(DummyRootComponent, {
         imports: [
           RouterTestingModule.withRoutes([
             { path: '', component: DummyHomeComponent },
@@ -36,25 +36,29 @@ function testRouteGuard({
           ]),
         ],
         providers: [{ provide: AuthStore, useValue: mockedAuthStore }],
-      }).createComponent(DummyRootComponent);
+      });
 
-      router = TestBed.inject(Router);
-      location = TestBed.inject(Location);
-    });
+      router = debugElement.injector.get(Router);
+      location = debugElement.injector.get(Location);
+    }
 
     describe('Given a user is authenticated', () => {
       let canNavigate: boolean;
 
-      beforeEach(async () => {
+      async function act() {
         isAuthenticated$.next(true);
         canNavigate = await router.navigateByUrl(testUrl);
-      });
+      }
 
-      it('Then allow access', () => {
+      it('Then allow access', async () => {
+        await setup();
+        await act();
         expect(canNavigate).toEqual(true);
       });
 
-      it('Then load component', () => {
+      it('Then load component', async () => {
+        await setup();
+        await act();
         expect(location.path()).toEqual(testUrl);
       });
     });
@@ -62,16 +66,20 @@ function testRouteGuard({
     describe('Given user is not authenticated', () => {
       let canNavigate: boolean;
 
-      beforeEach(async () => {
+      async function act() {
         isAuthenticated$.next(false);
         canNavigate = await router.navigateByUrl(testUrl);
-      });
+      }
 
-      it('Then follow through navigation', () => {
+      it('Then follow through navigation', async () => {
+        await setup();
+        await act();
         expect(canNavigate).toEqual(true);
       });
 
-      it('Then redirect to /', () => {
+      it('Then redirect to /', async () => {
+        await setup();
+        await act();
         expect(location.path()).toEqual('/');
       });
     });

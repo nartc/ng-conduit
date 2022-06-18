@@ -10,7 +10,7 @@ import { ArticlePreview } from './article-preview.component';
 describe(ArticlePreview.name, () => {
   let mockedToggleFavorite: jasmine.SpyObj<EventEmitter<Article>>;
 
-  async function setupRender(article?: Article) {
+  async function setup(article?: Article) {
     mockedToggleFavorite = jasmine.createSpyObj('mocked toggle favorite', [
       'emit',
     ]);
@@ -25,7 +25,7 @@ describe(ArticlePreview.name, () => {
 
   describe('Given no article', () => {
     it('Then do not render article-meta', async () => {
-      const { debugElement } = await setupRender();
+      const { debugElement } = await setup();
       const articleMeta = debugElement.query(By.css('.article-meta'));
       expect(articleMeta).toBeFalsy();
     });
@@ -35,13 +35,13 @@ describe(ArticlePreview.name, () => {
     const mockedArticle = getMockedArticle();
 
     it('Then render article-meta', async () => {
-      const { debugElement } = await setupRender(mockedArticle);
+      const { debugElement } = await setup(mockedArticle);
       const articleMeta = debugElement.query(By.css('.article-meta'));
       expect(articleMeta).toBeTruthy();
     });
 
     it('Then render article author avatar with link', async () => {
-      const { debugElement, getByAltText } = await setupRender(mockedArticle);
+      const { debugElement, getByAltText } = await setup(mockedArticle);
       const avatarLink = debugElement.query(By.css('.article-meta > a'));
 
       expect(avatarLink).toBeTruthy();
@@ -59,7 +59,7 @@ describe(ArticlePreview.name, () => {
     });
 
     it('Then render article meta info', async () => {
-      const { debugElement } = await setupRender(mockedArticle);
+      const { debugElement } = await setup(mockedArticle);
       const authorLink = debugElement.query(By.css('.info > .author'));
 
       expect(authorLink.nativeElement).toHaveAttribute(
@@ -81,7 +81,7 @@ describe(ArticlePreview.name, () => {
     });
 
     it('Then render toggle favorite button', async () => {
-      const { debugElement } = await setupRender(mockedArticle);
+      const { debugElement } = await setup(mockedArticle);
 
       const toggleFavoriteButton = debugElement.query(By.css('.btn.btn-sm'));
 
@@ -94,7 +94,7 @@ describe(ArticlePreview.name, () => {
     });
 
     it('Then render article preview link', async () => {
-      const { debugElement } = await setupRender(mockedArticle);
+      const { debugElement } = await setup(mockedArticle);
 
       const previewLink = debugElement.query(By.css('.preview-link'));
       const previewTitle = previewLink.query(By.css('h1'));
@@ -119,7 +119,7 @@ describe(ArticlePreview.name, () => {
 
     describe('When toggle favorite', () => {
       it('Then toggleFavorite should emit article with', async () => {
-        const { debugElement } = await setupRender(mockedArticle);
+        const { debugElement } = await setup(mockedArticle);
 
         const toggleFavoriteButton = debugElement.query(By.css('.btn.btn-sm'));
 
@@ -134,7 +134,7 @@ describe(ArticlePreview.name, () => {
     const mockedArticle = getMockedArticle({ article: { favorited: true } });
 
     it('Then render btn-primary for toggle favorite button', async () => {
-      const { debugElement } = await setupRender(mockedArticle);
+      const { debugElement } = await setup(mockedArticle);
 
       const toggleFavoriteButton = debugElement.query(By.css('.btn.btn-sm'));
 
