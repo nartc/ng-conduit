@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, UpdateUser } from '../shared/data-access/api';
@@ -11,11 +10,7 @@ export class SettingsStore extends ComponentStore<{}> {
     debounce: true,
   });
 
-  constructor(
-    private authStore: AuthStore,
-    private apiClient: ApiClient,
-    private router: Router
-  ) {
+  constructor(private authStore: AuthStore, private apiClient: ApiClient) {
     super({});
   }
 

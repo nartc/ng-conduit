@@ -30,7 +30,7 @@ export class EditArticleStore
     (params) => params['slug'] as string
   );
 
-  readonly article$ = this.select((s) => s.article);
+  readonly article$ = this.select((s) => s.article, { debounce: true });
 
   constructor(
     private apiClient: ApiClient,

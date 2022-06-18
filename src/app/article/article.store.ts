@@ -6,7 +6,6 @@ import {
   filter,
   forkJoin,
   iif,
-  map,
   Observable,
   pipe,
   switchMap,
@@ -42,9 +41,9 @@ export type ArticleVm = Omit<ArticleState, 'comments'> & {
 
 @Injectable()
 export class ArticleStore extends ComponentStore<ArticleState> {
-  readonly slug$ = this.route.params.pipe(
-    map((params) => params['slug']),
-    filter((slug): slug is string => slug)
+  readonly slug$ = this.select(
+    this.route.params,
+    (params) => params['slug'] as string
   );
 
   readonly article$ = this.select((s) => s.article);
