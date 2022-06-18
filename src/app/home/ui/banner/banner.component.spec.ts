@@ -1,15 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
 import { Banner } from './banner.component';
 
 describe(Banner.name, () => {
-  let fixture: ComponentFixture<Banner>;
+  async function setup() {
+    return await render(Banner);
+  }
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(Banner);
-  });
+  describe('When render', () => {
+    it('Then render banner title', async () => {
+      const { getByText } = await setup();
+      expect(getByText(/conduit/)).toBeTruthy();
+    });
 
-  it('should create component', () => {
-    const component = fixture.componentInstance;
-    expect(component).toBeTruthy();
+    it('Then render banner description', async () => {
+      const { getByText } = await setup();
+      expect(getByText(/A place to share your knowledge/)).toBeTruthy();
+    });
   });
 });
