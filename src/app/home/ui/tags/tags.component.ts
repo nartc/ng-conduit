@@ -28,11 +28,11 @@ import { ApiStatus } from '../../../shared/data-access/models';
           <ng-template #noTags>No tags</ng-template>
         </ng-container>
       </div>
-    </div>
 
-    <ng-template #loading>
-      <ng-content></ng-content>
-    </ng-template>
+      <ng-template #loading>
+        <ng-content></ng-content>
+      </ng-template>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
