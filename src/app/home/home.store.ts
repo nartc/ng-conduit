@@ -53,28 +53,23 @@ export class HomeStore
   extends ComponentStore<HomeState>
   implements OnStateInit
 {
-  readonly articles$ = this.select((s) => s.articles);
-  readonly tags$ = this.select((s) => s.tags);
-  readonly statuses$ = this.select((s) => s.statuses);
-  readonly selectedTag$ = this.select((s) => s.selectedTag);
-  readonly feedType$ = this.select((s) => s.feedType);
+  private readonly statuses$ = this.select((s) => s.statuses);
 
-  readonly articlesStatus$ = this.select(
+  private readonly articlesStatus$ = this.select(
     this.statuses$,
     (statuses) => statuses['articles']
   );
-
-  readonly tagsStatus$ = this.select(
+  private readonly tagsStatus$ = this.select(
     this.statuses$,
     (statuses) => statuses['tags']
   );
 
   readonly vm$: Observable<HomeVm> = this.select(
     this.authStore.isAuthenticated$,
-    this.articles$,
-    this.tags$,
-    this.selectedTag$,
-    this.feedType$,
+    this.select((s) => s.articles),
+    this.select((s) => s.tags),
+    this.select((s) => s.selectedTag),
+    this.select((s) => s.feedType),
     this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
     this.tagsStatus$.pipe(filter((status) => status !== 'idle')),
     (
@@ -106,7 +101,7 @@ export class HomeStore
     this.getTags();
   }
 
-  readonly getTags = this.effect<void>(
+  private readonly getTags = this.effect<void>(
     pipe(
       tap(() => this.setStatus({ key: 'tags', status: 'loading' })),
       switchMap(() =>
