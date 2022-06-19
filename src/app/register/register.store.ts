@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, NewUser } from '../shared/data-access/api';
@@ -26,7 +25,6 @@ export class RegisterStore extends ComponentStore<RegisterState> {
   constructor(
     private apiClient: ApiClient,
     private localStorageService: LocalStorageService,
-    private router: Router,
     private authStore: AuthStore
   ) {
     super(initialRegisterState);

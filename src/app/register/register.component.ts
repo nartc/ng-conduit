@@ -68,7 +68,7 @@ export class Register {
   readonly registerErrors$ = this.store.registerErrors$;
 
   readonly form: TypedFormGroup<NewUser> = this.fb.nonNullable.group({
-    username: [''],
+    username: ['', [Validators.required]],
     email: ['', [Validators.email, Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });

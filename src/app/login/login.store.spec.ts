@@ -1,7 +1,7 @@
 import { provideComponentStore } from '@ngrx/component-store';
 import { render } from '@testing-library/angular';
 import { of, take, throwError } from 'rxjs';
-import { ApiClient, NewUser } from '../shared/data-access/api';
+import { ApiClient, LoginUser } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { LocalStorageService } from '../shared/data-access/local-storage.service';
 import { getMockedUser } from '../testing.spec';
@@ -49,10 +49,9 @@ describe(LoginStore.name, () => {
   });
 
   describe('When login', () => {
-    const newUser: NewUser = {
+    const loginUser: LoginUser = {
       email: 'email',
       password: 'password',
-      username: 'username',
     };
 
     describe('Given login failed and has login errors', () => {
@@ -67,9 +66,9 @@ describe(LoginStore.name, () => {
           }))
         );
 
-        store.login(newUser);
+        store.login(loginUser);
 
-        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: newUser });
+        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: loginUser });
         store.loginErrors$.pipe(take(1)).subscribe((loginErrors) => {
           expect(loginErrors).toEqual({
             hasError: true,
@@ -85,9 +84,9 @@ describe(LoginStore.name, () => {
 
         mockedApiClient.login.and.returnValue(throwError(() => 'error login'));
 
-        store.login(newUser);
+        store.login(loginUser);
 
-        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: newUser });
+        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: loginUser });
         store.loginErrors$.pipe(take(1)).subscribe((loginErrors) => {
           expect(loginErrors).toEqual({ hasError: false, errors: [] });
         });
@@ -101,9 +100,9 @@ describe(LoginStore.name, () => {
 
         mockedApiClient.login.and.returnValue(of({ user }));
 
-        store.login(newUser);
+        store.login(loginUser);
 
-        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: newUser });
+        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: loginUser });
         expect(mockedLocalStorageService.setItem.calls.allArgs()).toEqual([
           ['ng-conduit-token', user.token],
           ['ng-conduit-user', user],
@@ -115,9 +114,9 @@ describe(LoginStore.name, () => {
 
         mockedApiClient.login.and.returnValue(of({ user }));
 
-        store.login(newUser);
+        store.login(loginUser);
 
-        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: newUser });
+        expect(mockedApiClient.login).toHaveBeenCalledWith({ user: loginUser });
         expect(mockedAuthStore.authenticate).toHaveBeenCalled();
       });
     });
