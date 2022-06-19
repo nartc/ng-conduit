@@ -47,21 +47,20 @@ export class ProfileStore
   extends ComponentStore<ProfileState>
   implements OnStateInit
 {
-  readonly username$ = this.route.params.pipe(
+  private readonly username$ = this.route.params.pipe(
     map((params) => params['username']),
     filter((username): username is string => username)
   );
 
-  readonly profile$ = this.select((s) => s.profile);
-  readonly articles$ = this.select((s) => s.articles);
-  readonly statuses$ = this.select((s) => s.statuses);
+  private readonly profile$ = this.select((s) => s.profile);
+  private readonly statuses$ = this.select((s) => s.statuses);
 
-  readonly profileStatus$ = this.select(
+  private readonly profileStatus$ = this.select(
     this.statuses$,
     (statuses) => statuses['profile']
   );
 
-  readonly articlesStatus$ = this.select(
+  private readonly articlesStatus$ = this.select(
     this.statuses$,
     (statuses) => statuses['articles']
   );
@@ -69,7 +68,7 @@ export class ProfileStore
   readonly articlesVm$: Observable<
     Pick<ProfileState, 'articles'> & { articlesStatus: ApiStatus }
   > = this.select(
-    this.articles$,
+    this.select((s) => s.articles),
     this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
     (articles, articlesStatus) => ({ articles, articlesStatus }),
     { debounce: true }
@@ -107,7 +106,7 @@ export class ProfileStore
     }),
   }));
 
-  readonly getProfile = this.effect<string>(
+  private readonly getProfile = this.effect<string>(
     pipe(
       tap(() => this.setStatus({ key: 'profile', status: 'loading' })),
       switchMap((username) =>

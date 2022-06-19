@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
+  defer,
   exhaustMap,
   filter,
   forkJoin,
-  iif,
   Observable,
   pipe,
   switchMap,
@@ -108,11 +108,11 @@ export class ArticleStore extends ComponentStore<ArticleState> {
 
   readonly toggleFavorite = this.effect<Article>(
     exhaustMap((article) =>
-      iif(
-        () => article.favorited,
-        this.apiClient.deleteArticleFavorite(article.slug),
-        this.apiClient.createArticleFavorite(article.slug)
-      ).pipe(
+      defer(() => {
+        if (article.favorited)
+          return this.apiClient.deleteArticleFavorite(article.slug);
+        return this.apiClient.createArticleFavorite(article.slug);
+      }).pipe(
         tapResponse(
           (response) => {
             this.patchState({ article: response.article });
@@ -142,11 +142,11 @@ export class ArticleStore extends ComponentStore<ArticleState> {
 
   readonly toggleFollowAuthor = this.effect<Profile>(
     exhaustMap((profile) =>
-      iif(
-        () => profile.following,
-        this.apiClient.unfollowUserByUsername(profile.username),
-        this.apiClient.followUserByUsername(profile.username)
-      ).pipe(
+      defer(() => {
+        if (profile.following)
+          return this.apiClient.unfollowUserByUsername(profile.username);
+        return this.apiClient.followUserByUsername(profile.username);
+      }).pipe(
         tapResponse(
           (response) => {
             this.patchState((state) => ({

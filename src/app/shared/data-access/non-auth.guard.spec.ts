@@ -1,8 +1,7 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, Routes } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { render } from '@testing-library/angular';
+import { RouterModule, Routes } from '@angular/router';
+import { render, RenderResult } from '@testing-library/angular';
 import { ReplaySubject } from 'rxjs';
 import { AuthStore } from './auth.store';
 import { NonAuthGuard } from './non-auth.guard';
@@ -19,7 +18,6 @@ function testRouteGuard({
   describe(NonAuthGuard.name + `: ${type}`, () => {
     let isAuthenticated$: ReplaySubject<boolean>;
     let mockedAuthStore: jasmine.SpyObj<AuthStore>;
-    let router: Router;
     let location: Location;
 
     async function setup() {
@@ -28,58 +26,53 @@ function testRouteGuard({
         isAuthenticated$,
       });
 
-      const { debugElement } = await render(DummyRootComponent, {
-        imports: [
-          RouterTestingModule.withRoutes([
-            { path: '', component: DummyHomeComponent },
-            ...routes,
-          ]),
-        ],
+      const renderResult = await render(DummyRootComponent, {
         providers: [{ provide: AuthStore, useValue: mockedAuthStore }],
+        routes: [{ path: '', component: DummyHomeComponent }, ...routes],
       });
 
-      router = debugElement.injector.get(Router);
-      location = debugElement.injector.get(Location);
+      location = renderResult.debugElement.injector.get(Location);
+      return renderResult;
     }
 
     describe('Given user is authenticated', () => {
-      let canNavigate: boolean;
+      let canNavigate: boolean | null;
 
-      async function act() {
+      async function act(renderResult: RenderResult<DummyRootComponent>) {
         isAuthenticated$.next(true);
-        canNavigate = await router.navigateByUrl(testUrl);
+        canNavigate = await renderResult.navigate(testUrl);
       }
 
       it('Then follow through navigation', async () => {
-        await setup();
-        await act();
-        expect(canNavigate).toEqual(true);
+        const renderResult = await setup();
+        await act(renderResult);
+        expect(canNavigate).toEqual(null);
       });
 
       it('Then redirect to /', async () => {
-        await setup();
-        await act();
+        const renderResult = await setup();
+        await act(renderResult);
         expect(location.path()).toEqual('/');
       });
     });
 
     describe('Given user is not authenticated', () => {
-      let canNavigate: boolean;
+      let canNavigate: boolean | null;
 
-      async function act() {
+      async function act(renderResult: RenderResult<DummyRootComponent>) {
         isAuthenticated$.next(false);
-        canNavigate = await router.navigateByUrl(testUrl);
+        canNavigate = await renderResult.navigate(testUrl);
       }
 
       it('Then allow access', async () => {
-        await setup();
-        await act();
+        const renderResult = await setup();
+        await act(renderResult);
         expect(canNavigate).toEqual(true);
       });
 
       it('Then load component', async () => {
-        await setup();
-        await act();
+        const renderResult = await setup();
+        await act(renderResult);
         expect(location.path()).toEqual('/target');
       });
     });
@@ -101,7 +94,7 @@ class DummyHomeComponent {}
 @Component({
   standalone: true,
   template: '<router-outlet></router-outlet>',
-  imports: [RouterTestingModule],
+  imports: [RouterModule],
 })
 class DummyRootComponent {}
 

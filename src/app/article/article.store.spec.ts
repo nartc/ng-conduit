@@ -1,7 +1,7 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { render } from '@testing-library/angular';
-import { EMPTY, of, ReplaySubject, take, throwError } from 'rxjs';
+import { EMPTY, Observable, of, ReplaySubject, take, throwError } from 'rxjs';
 import { ApiClient, Profile, User } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import {
@@ -230,7 +230,9 @@ describe(ArticleStore.name, () => {
 
   describe('When deleteArticle', () => {
     function arrangeDeleteArticle() {
-      mockedApiClient.deleteArticle.withArgs(mockedSlug).and.returnValue(of());
+      mockedApiClient.deleteArticle
+        .withArgs(mockedSlug)
+        .and.returnValue(of(null) as unknown as Observable<void>);
     }
 
     it('Then navigate to home', async () => {
@@ -252,7 +254,7 @@ describe(ArticleStore.name, () => {
           of({ profile: getMockedProfile({ following: true }) })
         );
 
-      mockedApiClient.followUserByUsername
+      mockedApiClient.unfollowUserByUsername
         .withArgs(mockedProfile.username)
         .and.returnValue(
           of({ profile: getMockedProfile({ following: false }) })
@@ -350,11 +352,13 @@ describe(ArticleStore.name, () => {
 
   describe('When deleteComment', () => {
     function arrangeDeleteComment() {
-      mockedApiClient.deleteArticleComment.and.returnValue(of());
+      mockedApiClient.deleteArticleComment.and.returnValue(
+        of(null) as unknown as Observable<void>
+      );
     }
 
     it('Then deleted comment is removed from comments', async () => {
-      await setup();
+      await setup('success');
       arrangeDeleteComment();
 
       store.deleteComment(mockedComments[0]);

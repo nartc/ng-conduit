@@ -4,7 +4,11 @@ import { By } from '@angular/platform-browser';
 import { render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CommentWithOwner } from '../../../shared/data-access/models';
-import { getMockedCommentWithOwner } from '../../../testing.spec';
+import {
+  getMockedCommentWithOwner,
+  getMockedProfile,
+  getMockedUser,
+} from '../../../testing.spec';
 import { ArticleComment } from './article-comment.component';
 
 describe(ArticleComment.name, () => {
@@ -22,7 +26,10 @@ describe(ArticleComment.name, () => {
   }
 
   describe('Given a comment that is not owned', () => {
-    const mockedComment = getMockedCommentWithOwner();
+    const mockedComment = getMockedCommentWithOwner({
+      profile: getMockedProfile({ username: 'some-other' }),
+      authUser: getMockedUser({ username: 'other' }),
+    });
 
     it('Then render comment body', async () => {
       const { getByText } = await setup(mockedComment);
