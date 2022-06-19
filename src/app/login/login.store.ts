@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, LoginUser } from '../shared/data-access/api';
@@ -17,16 +16,17 @@ export const initialLoginState: LoginState = {
 
 @Injectable()
 export class LoginStore extends ComponentStore<LoginState> {
-  readonly errors$ = this.select((s) => s.errors);
-
-  readonly loginErrors$ = this.select(this.errors$, processAuthErrors, {
-    debounce: true,
-  });
+  readonly loginErrors$ = this.select(
+    this.select((s) => s.errors),
+    processAuthErrors,
+    {
+      debounce: true,
+    }
+  );
 
   constructor(
     private apiClient: ApiClient,
     private localStorageService: LocalStorageService,
-    private router: Router,
     private authStore: AuthStore
   ) {
     super(initialLoginState);
