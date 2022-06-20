@@ -132,21 +132,18 @@ describe(Register.name, () => {
 
         // empty email
         fixture.componentInstance.form.reset();
-
         await userEvent.type(passwordInput, '12345678');
         await userEvent.type(usernameInput, 'username');
         expect(submitButton.nativeElement).toHaveAttribute('disabled');
 
         // empty password
         fixture.componentInstance.form.reset();
-
         await userEvent.type(emailInput, 'email@email.com');
         await userEvent.type(usernameInput, 'username');
         expect(submitButton.nativeElement).toHaveAttribute('disabled');
 
         // short password
         fixture.componentInstance.form.reset();
-
         await userEvent.type(emailInput, 'email@email.com');
         await userEvent.type(passwordInput, '123456');
         await userEvent.type(usernameInput, 'username');
@@ -154,7 +151,6 @@ describe(Register.name, () => {
 
         // empty username
         fixture.componentInstance.form.reset();
-
         await userEvent.type(emailInput, 'email@email.com');
         await userEvent.type(passwordInput, '12345678');
         expect(submitButton.nativeElement).toHaveAttribute('disabled');

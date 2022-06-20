@@ -99,11 +99,17 @@ export class Settings {
 
   private initForm(currentUser: User) {
     this.form.addControl('image', this.fb.control(currentUser.image || ''));
-    this.form.addControl('username', this.fb.control(currentUser.username));
+    this.form.addControl(
+      'username',
+      this.fb.control(currentUser.username, [Validators.required])
+    );
     this.form.addControl('bio', this.fb.control(currentUser.bio || ''));
     this.form.addControl(
       'email',
-      this.fb.control(currentUser.email, [Validators.email])
+      this.fb.control(currentUser.email, [
+        Validators.required,
+        Validators.email,
+      ])
     );
     this.form.addControl('token', this.fb.control(''));
     this.isFormInitialized = true;

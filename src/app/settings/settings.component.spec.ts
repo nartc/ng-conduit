@@ -64,6 +64,57 @@ describe(Settings.name, () => {
     });
   });
 
+  describe('Given invalid form', () => {
+    it('Then update settings button is disabled', async () => {
+      const { getByPlaceholderText, getByText } = await setup();
+
+      const urlInput = getByPlaceholderText(/URL of profile picture/);
+      const usernameInput = getByPlaceholderText(/Your Username/);
+      const bioInput = getByPlaceholderText(/Short bio about you/);
+      const emailInput = getByPlaceholderText(/Email/);
+      const submitButton = getByText(/Update Settings/);
+
+      await userEvent.clear(urlInput);
+      await userEvent.clear(usernameInput);
+      await userEvent.clear(bioInput);
+      await userEvent.clear(emailInput);
+
+      // empty username
+      await userEvent.type(emailInput, 'mail@mail.com');
+      expect(submitButton).toHaveAttribute('disabled');
+
+      // empty email
+      await userEvent.type(usernameInput, 'username');
+      await userEvent.clear(emailInput);
+      expect(submitButton).toHaveAttribute('disabled');
+
+      // invalid email
+      await userEvent.type(emailInput, 'mail');
+      expect(submitButton).toHaveAttribute('disabled');
+    });
+  });
+
+  describe('Given valid form', () => {
+    it('Then update settings button is enabled', async () => {
+      const { getByPlaceholderText, getByText } = await setup();
+
+      const urlInput = getByPlaceholderText(/URL of profile picture/);
+      const usernameInput = getByPlaceholderText(/Your Username/);
+      const bioInput = getByPlaceholderText(/Short bio about you/);
+      const emailInput = getByPlaceholderText(/Email/);
+      const submitButton = getByText(/Update Settings/);
+
+      await userEvent.clear(urlInput);
+      await userEvent.clear(usernameInput);
+      await userEvent.clear(bioInput);
+      await userEvent.clear(emailInput);
+
+      await userEvent.type(emailInput, 'mail@mail.com');
+      await userEvent.type(usernameInput, 'username');
+      expect(submitButton).not.toHaveAttribute('disabled');
+    });
+  });
+
   describe('When updateSettings', () => {
     it('Then call store.updateSettings with updated form values', async () => {
       const { getByPlaceholderText, getByText } = await setup();
