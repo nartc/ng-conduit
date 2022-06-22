@@ -10,7 +10,7 @@ import { ArticlesStore } from './articles.store';
   template: `
     <ng-container *ngIf="vm$ | async as vm">
       <app-articles-list
-        [status]="vm.articlesStatus"
+        [status]="vm.status"
         [articles]="vm.articles"
         (toggleFavorite)="toggleFavorite($event)"
       ></app-articles-list>

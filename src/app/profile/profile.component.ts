@@ -38,7 +38,7 @@ import { UserInfo } from './ui/user-info/user-info.component';
 export class Profile {
   constructor(private store: ProfileStore) {}
 
-  readonly vm$ = this.store.profileVm$;
+  readonly vm$ = this.store.vm$;
 
   toggleFollow(profile: ApiProfile) {
     this.store.toggleFollow(profile);

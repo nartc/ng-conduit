@@ -14,29 +14,22 @@ import {
   pipe,
   switchMap,
   tap,
-  withLatestFrom,
 } from 'rxjs';
-import { ApiClient, Article, Profile } from '../shared/data-access/api';
+import { ApiClient, Profile } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
 
 export interface ProfileState {
   profile: Profile | null;
-  articles: Article[];
-  statuses: Record<string, ApiStatus>;
+  status: ApiStatus;
 }
 
 export const initialProfileState: ProfileState = {
   profile: null,
-  articles: [],
-  statuses: {
-    articles: 'idle',
-    profile: 'idle',
-  },
+  status: 'idle',
 };
 
-export type ProfileVm = Omit<ProfileState, 'statuses' | 'articles'> & {
-  profileStatus: ApiStatus;
+export type ProfileVm = ProfileState & {
   isOwner: boolean;
 };
 
@@ -47,40 +40,20 @@ export class ProfileStore
   extends ComponentStore<ProfileState>
   implements OnStateInit
 {
+  readonly profile$ = this.select((s) => s.profile);
+
   private readonly username$ = this.route.params.pipe(
     map((params) => params['username']),
     filter((username): username is string => username)
   );
 
-  private readonly profile$ = this.select((s) => s.profile);
-  private readonly statuses$ = this.select((s) => s.statuses);
-
-  private readonly profileStatus$ = this.select(
-    this.statuses$,
-    (statuses) => statuses['profile']
-  );
-
-  private readonly articlesStatus$ = this.select(
-    this.statuses$,
-    (statuses) => statuses['articles']
-  );
-
-  readonly articlesVm$: Observable<
-    Pick<ProfileState, 'articles'> & { articlesStatus: ApiStatus }
-  > = this.select(
-    this.select((s) => s.articles),
-    this.articlesStatus$.pipe(filter((status) => status !== 'idle')),
-    (articles, articlesStatus) => ({ articles, articlesStatus }),
-    { debounce: true }
-  );
-
-  readonly profileVm$: Observable<ProfileVm> = this.select(
+  readonly vm$: Observable<ProfileVm> = this.select(
     this.authStore.auth$,
     this.profile$,
-    this.profileStatus$.pipe(filter((status) => status !== 'idle')),
-    (auth, profile, profileStatus) => ({
+    this.select((s) => s.status).pipe(filter((status) => status !== 'idle')),
+    (auth, profile, status) => ({
       profile,
-      profileStatus,
+      status,
       isOwner: auth.user?.username === profile?.username,
     }),
     { debounce: true }
@@ -98,58 +71,18 @@ export class ProfileStore
     this.getProfile(this.username$);
   }
 
-  readonly updateArticle = this.updater<Article>((state, updated) => ({
-    ...state,
-    articles: state.articles.map((article) => {
-      if (article.slug === updated.slug) return updated;
-      return article;
-    }),
-  }));
-
   private readonly getProfile = this.effect<string>(
     pipe(
-      tap(() => this.setStatus({ key: 'profile', status: 'loading' })),
+      tap(() => this.patchState({ status: 'loading' })),
       switchMap((username) =>
         this.apiClient.getProfileByUsername(username).pipe(
           tapResponse(
             (response) => {
-              this.patchState({ profile: response.profile });
-              this.setStatus({ key: 'profile', status: 'success' });
+              this.patchState({ profile: response.profile, status: 'success' });
             },
             (error) => {
               console.error('error getting profile by username: ', error);
-              this.setStatus({ key: 'profile', status: 'error' });
-            }
-          )
-        )
-      )
-    )
-  );
-
-  readonly getArticles = this.effect<ProfileArticlesType>(
-    pipe(
-      withLatestFrom(this.profile$),
-      tap(() => {
-        this.setStatus({ key: 'articles', status: 'loading' });
-      }),
-      switchMap(([type, profile]) =>
-        defer(() => {
-          if (type === 'favorites')
-            return this.apiClient.getArticles(
-              undefined,
-              undefined,
-              profile?.username
-            );
-          return this.apiClient.getArticles(undefined, profile?.username);
-        }).pipe(
-          tapResponse(
-            (response) => {
-              this.patchState({ articles: response.articles });
-              this.setStatus({ key: 'articles', status: 'success' });
-            },
-            (error) => {
-              console.error('error getting articles: ', error);
-              this.setStatus({ key: 'articles', status: 'error' });
+              this.patchState({ profile: null, status: 'error' });
             }
           )
         )
@@ -175,12 +108,4 @@ export class ProfileStore
       )
     )
   );
-
-  private readonly setStatus = this.updater<{
-    key: string;
-    status: ApiStatus;
-  }>((state, { key, status }) => ({
-    ...state,
-    statuses: { ...state.statuses, [key]: status },
-  }));
 }
