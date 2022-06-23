@@ -12,23 +12,23 @@ import { UserInfo } from './ui/user-info/user-info.component';
   template: `
     <div class="profile-page" *ngIf="vm$ | async as vm">
       <ng-container *ngIf="vm.status !== 'loading'; else loading">
-        <app-user-info
-          *ngIf="vm.profile"
-          [profile]="vm.profile"
-          [isOwner]="vm.isOwner"
-          (toggleFollow)="toggleFollow(vm.profile)"
-        ></app-user-info>
-
-        <div class="container" *ngIf="vm.profile">
-          <div class="row">
-            <div class="col-xs-12 col-md-10 offset-md-1">
-              <app-articles-toggle
-                [username]="vm.profile.username"
-              ></app-articles-toggle>
-              <router-outlet></router-outlet>
+        <ng-container *ngIf="vm.profile">
+          <app-user-info
+            [profile]="vm.profile"
+            [isOwner]="vm.isOwner"
+            (toggleFollow)="toggleFollow(vm.profile)"
+          ></app-user-info>
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12 col-md-10 offset-md-1">
+                <app-articles-toggle
+                  [username]="vm.profile.username"
+                ></app-articles-toggle>
+                <router-outlet></router-outlet>
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
       </ng-container>
       <ng-template #loading>
         <p>Loading profile...</p>

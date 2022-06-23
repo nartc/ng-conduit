@@ -55,6 +55,5 @@ import { Profile } from '../../../shared/data-access/api';
 export class UserInfo {
   @Input() profile!: Profile;
   @Input() isOwner = false;
-
   @Output() toggleFollow = new EventEmitter();
 }
