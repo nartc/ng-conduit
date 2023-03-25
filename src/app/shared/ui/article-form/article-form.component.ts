@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter, inject,
+  EventEmitter,
+  inject,
   Input,
-  Output
+  Output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Article } from '../../data-access/api';
@@ -92,7 +93,9 @@ export class ArticleForm {
 
   @Output() articleSubmit = new EventEmitter<ArticleFormData>();
 
-  readonly form: TypedFormGroup<ArticleFormData> = inject(FormBuilder).nonNullable.group({
+  readonly form: TypedFormGroup<ArticleFormData> = inject(
+    FormBuilder
+  ).nonNullable.group({
     title: ['', [Validators.required]],
     description: ['', [Validators.required]],
     body: ['', [Validators.required]],

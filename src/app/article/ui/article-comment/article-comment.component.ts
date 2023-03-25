@@ -39,7 +39,7 @@ import { CommentWithOwner } from '../../../shared/data-access/models';
           {{ comment.author.username }}
         </a>
         <span class="date-posted">
-          {{ comment.updatedAt | date: 'mediumDate' }}
+          {{ comment.updatedAt | date : 'mediumDate' }}
         </span>
         <span class="mod-options" *ngIf="comment.isOwner">
           <i class="ion-trash-a" (click)="delete.emit()"></i>

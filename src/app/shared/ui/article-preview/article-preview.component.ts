@@ -26,7 +26,7 @@ import { Article } from '../../data-access/api';
               {{ article.author.username }}
             </a>
             <span class="date">
-              {{ article.updatedAt | date: 'mediumDate' }}
+              {{ article.updatedAt | date : 'mediumDate' }}
             </span>
           </div>
           <button

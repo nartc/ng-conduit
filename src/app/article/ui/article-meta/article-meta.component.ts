@@ -20,7 +20,7 @@ import { Article, Profile } from '../../../shared/data-access/api';
         <a [routerLink]="['/profile', article.author.username]" class="author">
           {{ article.author.username }}
         </a>
-        <span class="date">{{ article.updatedAt | date: 'mediumDate' }}</span>
+        <span class="date">{{ article.updatedAt | date : 'mediumDate' }}</span>
       </div>
 
       <ng-container *ngIf="isOwner; else nonOwner">
