@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { provideComponentStore } from '@ngrx/component-store';
 import { LoginUser } from '../shared/data-access/api';
 import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { LoginStore } from './login.store';
 
 @Component({
-  selector: 'app-login',
   template: `
     <app-auth-layout>
       <h1 class="text-xs-center">Sign in</h1>
@@ -51,18 +51,27 @@ import { LoginStore } from './login.store';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AuthLayout, CommonModule, RouterModule, ReactiveFormsModule],
-  providers: [LoginStore],
+  imports: [
+    AuthLayout,
+    NgIf,
+    RouterLink,
+    NgFor,
+    AsyncPipe,
+    ReactiveFormsModule,
+  ],
+  providers: [provideComponentStore(LoginStore)],
 })
-export class Login {
+export default class Login {
+  private readonly store = inject(LoginStore);
+
   readonly loginErrors$ = this.store.loginErrors$;
 
-  readonly form: TypedFormGroup<LoginUser> = this.fb.nonNullable.group({
+  readonly form: TypedFormGroup<LoginUser> = inject(
+    FormBuilder
+  ).nonNullable.group({
     email: ['', [Validators.email]],
     password: [''],
   });
-
-  constructor(private store: LoginStore, private fb: FormBuilder) {}
 
   submit() {
     this.store.login(this.form.getRawValue());

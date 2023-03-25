@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideComponentStore } from '@ngrx/component-store';
 import { tap } from 'rxjs';
@@ -8,7 +8,6 @@ import { TypedFormGroup } from '../shared/utils/typed-form';
 import { SettingsStore } from './settings.store';
 
 @Component({
-  selector: 'app-settings',
   template: `
     <div class="settings-page" *ngIf="vm$ | async as vm">
       <div class="container page">
@@ -81,12 +80,14 @@ import { SettingsStore } from './settings.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   providers: [provideComponentStore(SettingsStore)],
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [NgIf, AsyncPipe, ReactiveFormsModule],
 })
-export class Settings {
-  constructor(private fb: FormBuilder, private store: SettingsStore) {}
+export default class Settings {
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(SettingsStore);
 
   readonly form: TypedFormGroup<UpdateUser> = this.fb.nonNullable.group({});
+
   readonly vm$ = this.store.vm$.pipe(
     tap((currentUser) => {
       if (currentUser && !this.isFormInitialized) {

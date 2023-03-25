@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { provideComponentStore } from '@ngrx/component-store';
 import { NewUser } from '../shared/data-access/api';
 import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { RegisterStore } from './register.store';
 
 @Component({
-  selector: 'app-register',
   template: `
     <app-auth-layout>
       <h1 class="text-xs-center">Sign up</h1>
@@ -59,15 +59,24 @@ import { RegisterStore } from './register.store';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AuthLayout, CommonModule, RouterModule, ReactiveFormsModule],
-  providers: [RegisterStore],
+  imports: [
+    AuthLayout,
+    RouterLink,
+    AsyncPipe,
+    NgIf,
+    NgFor,
+    ReactiveFormsModule,
+  ],
+  providers: [provideComponentStore(RegisterStore)],
 })
-export class Register {
-  constructor(private fb: FormBuilder, private store: RegisterStore) {}
+export default class Register {
+  private readonly store = inject(RegisterStore);
 
   readonly registerErrors$ = this.store.registerErrors$;
 
-  readonly form: TypedFormGroup<NewUser> = this.fb.nonNullable.group({
+  readonly form: TypedFormGroup<NewUser> = inject(
+    FormBuilder
+  ).nonNullable.group({
     username: ['', [Validators.required]],
     email: ['', [Validators.email, Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],

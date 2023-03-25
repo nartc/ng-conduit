@@ -1,12 +1,5 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-} from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Article } from '../../data-access/api';
 import { TypedFormGroup } from '../../utils/typed-form';
@@ -76,9 +69,8 @@ export interface ArticleFormData {
       </fieldset>
     </form>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [NgIf, NgFor, ReactiveFormsModule],
 })
 export class ArticleForm {
   @Input() set article(article: Article) {

@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -48,6 +48,7 @@ import { RouterModule } from '@angular/router';
                 class="nav-link"
                 [routerLink]="['/profile', username]"
                 routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
               >
                 {{ username }}
               </a>
@@ -79,9 +80,8 @@ import { RouterModule } from '@angular/router';
       </div>
     </nav>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterLink, RouterLinkActive, NgIf],
 })
 export class Header {
   @Input() isAuthenticated = false;

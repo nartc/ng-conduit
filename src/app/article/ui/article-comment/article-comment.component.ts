@@ -1,12 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { DatePipe, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CommentWithOwner } from '../../../shared/data-access/models';
 
 @Component({
@@ -47,9 +41,8 @@ import { CommentWithOwner } from '../../../shared/data-access/models';
       </div>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterLink, NgIf, DatePipe],
 })
 export class ArticleComment {
   @Input() comment!: CommentWithOwner;

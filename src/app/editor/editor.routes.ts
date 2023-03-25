@@ -1,16 +1,12 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 
-export const editorRoutes: Route[] = [
+export default [
   {
     path: '',
-    loadComponent: () =>
-      import('./new-article.component').then((m) => m.NewArticle),
+    loadComponent: () => import('./new-article.component'),
   },
   {
     path: ':slug',
-    loadComponent: () =>
-      import('./edit-article/edit-article.component').then(
-        (m) => m.EditArticle
-      ),
+    loadComponent: () => import('./edit-article/edit-article.component'),
   },
-];
+] as Routes;

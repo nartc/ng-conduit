@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, Input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-articles-toggle',
@@ -29,9 +29,8 @@ import { RouterModule } from '@angular/router';
       </ul>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterLink, RouterLinkActive],
 })
 export class ArticlesToggle {
   @Input() username = '';

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ComponentStore,
   OnStateInit,
+  OnStoreInit,
   tapResponse,
 } from '@ngrx/component-store';
 import { exhaustMap, pipe, switchMap, withLatestFrom } from 'rxjs';
@@ -23,8 +24,12 @@ export const initialEditArticleState: EditArticleState = {
 @Injectable()
 export class EditArticleStore
   extends ComponentStore<EditArticleState>
-  implements OnStateInit
+  implements OnStateInit, OnStoreInit
 {
+  private readonly apiClient = inject(ApiClient);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
   readonly slug$ = this.select(
     this.route.params,
     (params) => params['slug'] as string
@@ -32,12 +37,8 @@ export class EditArticleStore
 
   readonly article$ = this.select((s) => s.article, { debounce: true });
 
-  constructor(
-    private apiClient: ApiClient,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
-    super(initialEditArticleState);
+  ngrxOnStoreInit() {
+    this.setState(initialEditArticleState);
   }
 
   ngrxOnStateInit() {

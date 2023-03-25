@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   ComponentStore,
   OnStateInit,
+  OnStoreInit,
   tapResponse,
 } from '@ngrx/component-store';
 import {
@@ -51,8 +52,11 @@ export type HomeVm = Omit<HomeState, 'statuses'> & {
 @Injectable()
 export class HomeStore
   extends ComponentStore<HomeState>
-  implements OnStateInit
+  implements OnStateInit, OnStoreInit
 {
+  private readonly apiClient = inject(ApiClient);
+  private readonly authStore = inject(AuthStore);
+
   private readonly statuses$ = this.select((s) => s.statuses);
 
   private readonly articlesStatus$ = this.select(
@@ -92,8 +96,8 @@ export class HomeStore
     { debounce: true }
   );
 
-  constructor(private apiClient: ApiClient, private authStore: AuthStore) {
-    super(initialHomeState);
+  ngrxOnStoreInit() {
+    this.setState(initialHomeState);
   }
 
   ngrxOnStateInit() {

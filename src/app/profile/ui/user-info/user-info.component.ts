@@ -1,12 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLinkActive } from '@angular/router';
 import { Profile } from '../../../shared/data-access/api';
 
 @Component({
@@ -48,9 +42,8 @@ import { Profile } from '../../../shared/data-access/api';
       </div>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [NgIf, RouterLinkActive],
 })
 export class UserInfo {
   @Input() profile!: Profile;

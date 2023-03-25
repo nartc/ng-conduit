@@ -8,8 +8,5 @@ export const PROFILE_ARTICLES_TYPE = new InjectionToken<ProfileArticlesType>(
 export function provideProfileArticlesType(
   type: ProfileArticlesType
 ): Provider {
-  return {
-    provide: PROFILE_ARTICLES_TYPE,
-    useValue: type,
-  };
+  return { provide: PROFILE_ARTICLES_TYPE, useValue: type };
 }

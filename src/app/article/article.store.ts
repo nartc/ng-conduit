@@ -1,6 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import {
+  ComponentStore,
+  OnStateInit,
+  OnStoreInit,
+  tapResponse,
+} from '@ngrx/component-store';
 import {
   defer,
   exhaustMap,
@@ -40,7 +45,15 @@ export type ArticleVm = Omit<ArticleState, 'comments'> & {
 };
 
 @Injectable()
-export class ArticleStore extends ComponentStore<ArticleState> {
+export class ArticleStore
+  extends ComponentStore<ArticleState>
+  implements OnStateInit, OnStoreInit
+{
+  private readonly apiClient = inject(ApiClient);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly authStore = inject(AuthStore);
+
   readonly slug$ = this.select(
     this.route.params,
     (params) => params['slug'] as string
@@ -59,9 +72,10 @@ export class ArticleStore extends ComponentStore<ArticleState> {
       return {
         article,
         comments: comments.map((comment) => {
-          if (comment.author.username === auth.user?.username)
-            return { ...comment, isOwner: true };
-          return { ...comment, isOwner: false };
+          return {
+            ...comment,
+            isOwner: comment.author.username === auth.user?.username,
+          };
         }),
         status,
         currentUser: auth.profile!,
@@ -71,13 +85,8 @@ export class ArticleStore extends ComponentStore<ArticleState> {
     { debounce: true }
   );
 
-  constructor(
-    private apiClient: ApiClient,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authStore: AuthStore
-  ) {
-    super(initialArticleState);
+  ngrxOnStoreInit() {
+    this.setState(initialArticleState);
   }
 
   ngrxOnStateInit() {
@@ -88,12 +97,12 @@ export class ArticleStore extends ComponentStore<ArticleState> {
     pipe(
       tap(() => this.patchState({ status: 'loading' })),
       switchMap((slug) =>
-        forkJoin([
-          this.apiClient.getArticle(slug),
-          this.apiClient.getArticleComments(slug),
-        ]).pipe(
+        forkJoin({
+          article: this.apiClient.getArticle(slug),
+          comments: this.apiClient.getArticleComments(slug),
+        }).pipe(
           tapResponse(
-            ([{ article }, { comments }]) => {
+            ({ article: { article }, comments: { comments } }) => {
               this.patchState({ article, comments, status: 'success' });
             },
             (error) => {

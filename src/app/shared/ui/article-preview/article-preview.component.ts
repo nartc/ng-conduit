@@ -1,12 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Article } from '../../data-access/api';
 
 @Component({
@@ -55,13 +49,12 @@ import { Article } from '../../data-access/api';
         </a>
       </ng-container>
       <ng-template #noArticle>
-        <ng-content></ng-content>
+        <ng-content />
       </ng-template>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [NgIf, NgFor, DatePipe, RouterLink],
 })
 export class ArticlePreview {
   @Input() article?: Article;

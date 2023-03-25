@@ -1,5 +1,9 @@
-import { Injectable } from '@angular/core';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { inject, Injectable } from '@angular/core';
+import {
+  ComponentStore,
+  OnStoreInit,
+  tapResponse,
+} from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, NewUser } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
@@ -15,19 +19,22 @@ export const initialRegisterState: RegisterState = {
 };
 
 @Injectable()
-export class RegisterStore extends ComponentStore<RegisterState> {
+export class RegisterStore
+  extends ComponentStore<RegisterState>
+  implements OnStoreInit
+{
+  private readonly apiClient = inject(ApiClient);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly authStore = inject(AuthStore);
+
   readonly errors$ = this.select((s) => s.errors);
 
   readonly registerErrors$ = this.select(this.errors$, processAuthErrors, {
     debounce: true,
   });
 
-  constructor(
-    private apiClient: ApiClient,
-    private localStorageService: LocalStorageService,
-    private authStore: AuthStore
-  ) {
-    super(initialRegisterState);
+  ngrxOnStoreInit() {
+    this.setState(initialRegisterState);
   }
 
   readonly register = this.effect<NewUser>(

@@ -1,12 +1,6 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { DatePipe, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Article, Profile } from '../../../shared/data-access/api';
 
 @Component({
@@ -64,9 +58,8 @@ import { Article, Profile } from '../../../shared/data-access/api';
       </ng-template>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterLink, NgIf, DatePipe],
 })
 export class ArticleMeta {
   @Input() article!: Article;

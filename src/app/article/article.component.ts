@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Article as ApiArticle, Profile } from '../shared/data-access/api';
 import { CommentWithOwner } from '../shared/data-access/models';
@@ -10,7 +10,6 @@ import { ArticleComment } from './ui/article-comment/article-comment.component';
 import { ArticleMeta } from './ui/article-meta/article-meta.component';
 
 @Component({
-  selector: 'app-article',
   template: `
     <div class="article-page" *ngIf="vm$ | async as vm">
       <ng-container *ngIf="vm.status !== 'loading'; else loading">
@@ -25,7 +24,7 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
                 (toggleFavorite)="toggleFavorite(vm.article)"
                 (delete)="deleteArticle(vm.article)"
                 (followAuthor)="toggleFollowAuthor($event)"
-              ></app-article-meta>
+              />
             </div>
           </div>
 
@@ -56,7 +55,7 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
                 (toggleFavorite)="toggleFavorite(vm.article)"
                 (delete)="deleteArticle(vm.article)"
                 (followAuthor)="toggleFollowAuthor($event)"
-              ></app-article-meta>
+              />
             </div>
 
             <div class="row">
@@ -64,13 +63,13 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
                 <app-article-comment-form
                   [currentUser]="vm.currentUser"
                   (comment)="createComment($event)"
-                ></app-article-comment-form>
+                />
 
                 <app-article-comment
                   *ngFor="let comment of vm.comments"
                   [comment]="comment"
                   (delete)="deleteComment(comment)"
-                ></app-article-comment>
+                />
               </div>
             </div>
           </div>
@@ -88,12 +87,14 @@ import { ArticleMeta } from './ui/article-meta/article-meta.component';
     ArticleComment,
     ArticleCommentForm,
     ArticleBodyMarkdown,
-    CommonModule,
+    NgIf,
+    NgFor,
+    AsyncPipe,
   ],
   providers: [provideComponentStore(ArticleStore)],
 })
-export class Article {
-  constructor(private store: ArticleStore) {}
+export default class Article {
+  private readonly store = inject(ArticleStore);
 
   readonly vm$ = this.store.vm$;
 

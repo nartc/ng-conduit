@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Profile } from '../../../shared/data-access/api';
 import { TypedFormGroup } from '../../../shared/utils/typed-form';
@@ -33,7 +27,6 @@ import { TypedFormGroup } from '../../../shared/utils/typed-form';
       </div>
     </form>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [ReactiveFormsModule],
 })
@@ -42,12 +35,11 @@ export class ArticleCommentForm {
 
   @Output() comment = new EventEmitter<string>();
 
-  constructor(private fb: FormBuilder) {}
-
-  readonly form: TypedFormGroup<{ comment: string }> =
-    this.fb.nonNullable.group({
-      comment: [''],
-    });
+  readonly form: TypedFormGroup<{ comment: string }> = inject(
+    FormBuilder
+  ).nonNullable.group({
+    comment: [''],
+  });
 
   submit() {
     this.comment.emit(this.form.getRawValue().comment);

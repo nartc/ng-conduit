@@ -1,5 +1,9 @@
-import { Injectable } from '@angular/core';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { inject, Injectable } from '@angular/core';
+import {
+  ComponentStore,
+  OnStoreInit,
+  tapResponse,
+} from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, LoginUser } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
@@ -15,21 +19,22 @@ export const initialLoginState: LoginState = {
 };
 
 @Injectable()
-export class LoginStore extends ComponentStore<LoginState> {
+export class LoginStore
+  extends ComponentStore<LoginState>
+  implements OnStoreInit
+{
+  private readonly apiClient = inject(ApiClient);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly authStore = inject(AuthStore);
+
   readonly loginErrors$ = this.select(
     this.select((s) => s.errors),
     processAuthErrors,
-    {
-      debounce: true,
-    }
+    { debounce: true }
   );
 
-  constructor(
-    private apiClient: ApiClient,
-    private localStorageService: LocalStorageService,
-    private authStore: AuthStore
-  ) {
-    super(initialLoginState);
+  ngrxOnStoreInit() {
+    this.setState(initialLoginState);
   }
 
   readonly login = this.effect<LoginUser>(

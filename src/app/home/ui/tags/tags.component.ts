@@ -1,11 +1,5 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ApiStatus } from '../../../shared/data-access/models';
 
 @Component({
@@ -30,13 +24,12 @@ import { ApiStatus } from '../../../shared/data-access/models';
       </div>
 
       <ng-template #loading>
-        <ng-content></ng-content>
+        <ng-content />
       </ng-template>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgIf, NgFor],
 })
 export class Tags {
   @Input() status!: ApiStatus;

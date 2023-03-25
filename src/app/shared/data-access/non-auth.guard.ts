@@ -1,27 +1,18 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, CanLoad, Router, UrlTree } from '@angular/router';
-import { map, Observable, take } from 'rxjs';
+import { inject } from '@angular/core';
+import { CanMatchFn, Router } from '@angular/router';
+import { map, take } from 'rxjs';
 import { AuthStore } from './auth.store';
 
-@Injectable({ providedIn: 'root' })
-export class NonAuthGuard implements CanActivate, CanLoad {
-  constructor(private authStore: AuthStore, private router: Router) {}
-
-  canLoad(): Observable<boolean | UrlTree> {
-    return this.isAuthenticated$();
-  }
-
-  canActivate(): Observable<boolean | UrlTree> {
-    return this.isAuthenticated$();
-  }
-
-  private isAuthenticated$() {
-    return this.authStore.isAuthenticated$.pipe(
+export function nonAuthGuard(): CanMatchFn {
+  return () => {
+    const authStore = inject(AuthStore);
+    const router = inject(Router);
+    return authStore.isAuthenticated$.pipe(
       map((isAuthenticated) => {
         if (!isAuthenticated) return !isAuthenticated;
-        return this.router.parseUrl('/');
+        return router.parseUrl('/');
       }),
       take(1)
     );
-  }
+  };
 }

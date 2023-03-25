@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { defer, filter, Observable, of, switchMap, tap } from 'rxjs';
@@ -21,6 +21,10 @@ export const initialAuthState: AuthState = {
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore extends ComponentStore<AuthState> {
+  private readonly apiClient = inject(ApiClient);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly router = inject(Router);
+
   readonly user$ = this.select((s) => s.user);
   readonly profile$ = this.select((s) => s.profile);
   readonly status$ = this.select((s) => s.status);
@@ -48,11 +52,7 @@ export class AuthStore extends ComponentStore<AuthState> {
     { debounce: true }
   );
 
-  constructor(
-    private apiClient: ApiClient,
-    private localStorageService: LocalStorageService,
-    private router: Router
-  ) {
+  constructor() {
     super(initialAuthState);
   }
 

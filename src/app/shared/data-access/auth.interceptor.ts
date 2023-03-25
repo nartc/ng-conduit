@@ -1,23 +1,10 @@
-import {
-  HTTP_INTERCEPTORS,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
-import { Injectable, Provider } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private localStorageService: LocalStorageService) {}
-
-  intercept(
-    req: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
-    const token = this.localStorageService.getItem('ng-conduit-token');
+export function authInterceptor(): HttpInterceptorFn {
+  return (req, next) => {
+    const token = inject(LocalStorageService).getItem('ng-conduit-token');
 
     if (token) {
       req = req.clone({
@@ -27,14 +14,6 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(req);
-  }
-}
-
-export function provideAuthInterceptor(): Provider {
-  return {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true,
+    return next(req);
   };
 }

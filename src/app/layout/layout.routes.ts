@@ -1,54 +1,40 @@
-import { Route } from '@angular/router';
-import { AuthGuard } from '../shared/data-access/auth.guard';
-import { NonAuthGuard } from '../shared/data-access/non-auth.guard';
+import { Routes } from '@angular/router';
+import { authGuard } from '../shared/data-access/auth.guard';
+import { nonAuthGuard } from '../shared/data-access/non-auth.guard';
 
-export const routes: Route[] = [
+export default [
   {
     path: '',
-    loadComponent: () => import('../home/home.component').then((m) => m.Home),
+    loadComponent: () => import('../home/home.component'),
   },
   {
     path: 'login',
-    canActivate: [NonAuthGuard],
-    canLoad: [NonAuthGuard],
-    loadComponent: () =>
-      import('../login/login.component').then((m) => m.Login),
+    canMatch: [nonAuthGuard()],
+    loadComponent: () => import('../login/login.component'),
   },
   {
     path: 'register',
-    canActivate: [NonAuthGuard],
-    canLoad: [NonAuthGuard],
-    loadComponent: () =>
-      import('../register/register.component').then((m) => m.Register),
+    canMatch: [nonAuthGuard()],
+    loadComponent: () => import('../register/register.component'),
   },
   {
     path: 'editor',
-    canActivate: [AuthGuard],
-    canLoad: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    loadChildren: () =>
-      import('../editor/editor.routes').then((m) => m.editorRoutes),
+    canMatch: [authGuard()],
+    loadChildren: () => import('../editor/editor.routes'),
   },
   {
     path: 'settings',
-    canActivate: [AuthGuard],
-    canLoad: [AuthGuard],
-    loadComponent: () =>
-      import('../settings/settings.component').then((m) => m.Settings),
+    canMatch: [authGuard()],
+    loadComponent: () => import('../settings/settings.component'),
   },
   {
     path: 'article/:slug',
-    canActivate: [AuthGuard],
-    canLoad: [AuthGuard],
-    loadComponent: () =>
-      import('../article/article.component').then((m) => m.Article),
+    canMatch: [authGuard()],
+    loadComponent: () => import('../article/article.component'),
   },
   {
     path: 'profile/:username',
-    canActivate: [AuthGuard],
-    canLoad: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    loadChildren: () =>
-      import('../profile/profile.routes').then((m) => m.profileRoutes),
+    canMatch: [authGuard()],
+    loadChildren: () => import('../profile/profile.routes'),
   },
-];
+] as Routes;

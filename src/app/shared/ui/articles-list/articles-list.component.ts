@@ -1,11 +1,5 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Article } from '../../data-access/api';
 import { ApiStatus } from '../../data-access/models';
 import { ArticlePreview } from '../article-preview/article-preview.component';
@@ -19,7 +13,7 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
           *ngFor="let article of articles"
           [article]="article"
           (toggleFavorite)="toggleFavorite.emit($event)"
-        ></app-article-preview>
+        />
       </ng-container>
       <ng-template #noArticles>
         <app-article-preview>No articles are here...yet</app-article-preview>
@@ -30,9 +24,8 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
       <app-article-preview>Loading articles...</app-article-preview>
     </ng-template>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ArticlePreview, CommonModule],
+  imports: [ArticlePreview, NgIf, NgFor],
 })
 export class ArticlesList {
   @Input() status!: ApiStatus;

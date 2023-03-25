@@ -1,17 +1,24 @@
-import { Injectable } from '@angular/core';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { inject, Injectable } from '@angular/core';
+import {
+  ComponentStore,
+  OnStoreInit,
+  tapResponse,
+} from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
 import { ApiClient, UpdateUser } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 
 @Injectable()
-export class SettingsStore extends ComponentStore<{}> {
+export class SettingsStore extends ComponentStore<{}> implements OnStoreInit {
+  private readonly authStore = inject(AuthStore);
+  private readonly apiClient = inject(ApiClient);
+
   readonly vm$ = this.select(this.authStore.auth$, (auth) => auth.user, {
     debounce: true,
   });
 
-  constructor(private authStore: AuthStore, private apiClient: ApiClient) {
-    super({});
+  ngrxOnStoreInit() {
+    this.setState({});
   }
 
   readonly updateSettings = this.effect<UpdateUser>(

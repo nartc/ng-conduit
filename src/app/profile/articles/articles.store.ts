@@ -1,5 +1,10 @@
-import { Inject, Injectable } from '@angular/core';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { inject, Injectable } from '@angular/core';
+import {
+  ComponentStore,
+  OnStateInit,
+  OnStoreInit,
+  tapResponse,
+} from '@ngrx/component-store';
 import {
   defer,
   exhaustMap,
@@ -26,7 +31,14 @@ export const initialArticlesState: ArticlesState = {
 };
 
 @Injectable()
-export class ArticlesStore extends ComponentStore<ArticlesState> {
+export class ArticlesStore
+  extends ComponentStore<ArticlesState>
+  implements OnStoreInit, OnStateInit
+{
+  private readonly type = inject(PROFILE_ARTICLES_TYPE);
+  private readonly profileStore = inject(ProfileStore);
+  private readonly apiClient = inject(ApiClient);
+
   readonly vm$: Observable<ArticlesState> = this.select(
     this.select((s) => s.articles),
     this.select((s) => s.status).pipe(filter((status) => status !== 'idle')),
@@ -34,12 +46,8 @@ export class ArticlesStore extends ComponentStore<ArticlesState> {
     { debounce: true }
   );
 
-  constructor(
-    @Inject(PROFILE_ARTICLES_TYPE) private type: ProfileArticlesType,
-    private profileStore: ProfileStore,
-    private apiClient: ApiClient
-  ) {
-    super(initialArticlesState);
+  ngrxOnStoreInit() {
+    this.setState(initialArticlesState);
   }
 
   ngrxOnStateInit() {

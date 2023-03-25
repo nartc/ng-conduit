@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   ComponentStore,
   OnStateInit,
+  OnStoreInit,
   tapResponse,
 } from '@ngrx/component-store';
 import {
@@ -38,8 +39,12 @@ export type ProfileArticlesType = 'my' | 'favorites';
 @Injectable()
 export class ProfileStore
   extends ComponentStore<ProfileState>
-  implements OnStateInit
+  implements OnStateInit, OnStoreInit
 {
+  private readonly apiClient = inject(ApiClient);
+  private readonly route = inject(ActivatedRoute);
+  private readonly authStore = inject(AuthStore);
+
   readonly profile$ = this.select((s) => s.profile);
 
   private readonly username$ = this.route.params.pipe(
@@ -59,12 +64,8 @@ export class ProfileStore
     { debounce: true }
   );
 
-  constructor(
-    private apiClient: ApiClient,
-    private route: ActivatedRoute,
-    private authStore: AuthStore
-  ) {
-    super(initialProfileState);
+  ngrxOnStoreInit() {
+    this.setState(initialProfileState);
   }
 
   ngrxOnStateInit() {
