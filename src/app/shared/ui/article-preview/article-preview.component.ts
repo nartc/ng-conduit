@@ -50,6 +50,5 @@ import { Article } from '../../data-access/api';
 })
 export class ArticlePreview {
     @Input() article?: Article;
-
     @Output() toggleFavorite = new EventEmitter<Article>();
 }

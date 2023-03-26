@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ArticleForm, ArticleFormData } from '../shared/ui/article-form/article-form.component';
-import { EditorLayout } from '../shared/ui/editor-layout/editor-layout.component';
+import { FormLayout } from '../shared/ui/form-layout/form-layout.component';
 import { NewArticleStore } from './new-article.store';
 
 @Component({
     template: `
-        <app-editor-layout>
+        <app-form-layout class="editor-page" innerClass="col-md-10 offset-md-1 col-xs-12">
             <app-article-form (articleSubmit)="articleSubmit($event)" />
-        </app-editor-layout>
+        </app-form-layout>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [EditorLayout, ArticleForm],
+    imports: [FormLayout, ArticleForm],
     providers: [provideComponentStore(NewArticleStore)],
 })
 export default class NewArticle {

@@ -1,6 +1,6 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Article } from '../../data-access/api';
 import { TypedFormGroup } from '../../utils/typed-form';
 
@@ -82,7 +82,7 @@ export class ArticleForm {
 
     @Output() articleSubmit = new EventEmitter<ArticleFormData>();
 
-    readonly form: TypedFormGroup<ArticleFormData> = inject(FormBuilder).nonNullable.group({
+    readonly form: TypedFormGroup<ArticleFormData> = inject(NonNullableFormBuilder).group({
         title: ['', [Validators.required]],
         description: ['', [Validators.required]],
         body: ['', [Validators.required]],

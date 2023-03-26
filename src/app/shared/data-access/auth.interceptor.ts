@@ -7,11 +7,7 @@ export function authInterceptor(): HttpInterceptorFn {
         const token = inject(LocalStorageService).getItem('ng-conduit-token');
 
         if (token) {
-            req = req.clone({
-                setHeaders: {
-                    Authorization: `Token ${token}`,
-                },
-            });
+            req = req.clone({ setHeaders: { Authorization: `Token ${token}` } });
         }
 
         return next(req);

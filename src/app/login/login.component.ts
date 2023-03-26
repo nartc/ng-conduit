@@ -4,13 +4,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { LoginUser } from '../shared/data-access/api';
-import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
+import { FormLayout } from '../shared/ui/form-layout/form-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { LoginStore } from './login.store';
 
 @Component({
     template: `
-        <app-auth-layout>
+        <app-form-layout class="auth-page" innerClass="col-md-6 offset-md-3 col-xs-12">
             <h1 class="text-xs-center">Sign in</h1>
             <p class="text-xs-center">
                 <a routerLink="/register">Need an account?</a>
@@ -43,11 +43,11 @@ import { LoginStore } from './login.store';
                     Sign in
                 </button>
             </form>
-        </app-auth-layout>
+        </app-form-layout>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [AuthLayout, NgIf, RouterLink, NgFor, AsyncPipe, ReactiveFormsModule],
+    imports: [FormLayout, NgIf, RouterLink, NgFor, AsyncPipe, ReactiveFormsModule],
     providers: [provideComponentStore(LoginStore)],
 })
 export default class Login {

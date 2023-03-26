@@ -30,6 +30,5 @@ import { ArticlePreview } from '../article-preview/article-preview.component';
 export class ArticlesList {
     @Input() status!: ApiStatus;
     @Input() articles: Article[] = [];
-
     @Output() toggleFavorite = new EventEmitter<Article>();
 }

@@ -4,13 +4,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { NewUser } from '../shared/data-access/api';
-import { AuthLayout } from '../shared/ui/auth-layout/auth-layout.component';
+import { FormLayout } from '../shared/ui/form-layout/form-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
 import { RegisterStore } from './register.store';
 
 @Component({
     template: `
-        <app-auth-layout>
+        <app-form-layout class="auth-page" innerClass="col-md-6 offset-md-3 col-xs-12">
             <h1 class="text-xs-center">Sign up</h1>
             <p class="text-xs-center">
                 <a routerLink="/login">Have an account?</a>
@@ -51,11 +51,11 @@ import { RegisterStore } from './register.store';
                     Sign up
                 </button>
             </form>
-        </app-auth-layout>
+        </app-form-layout>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [AuthLayout, RouterLink, AsyncPipe, NgIf, NgFor, ReactiveFormsModule],
+    imports: [FormLayout, RouterLink, AsyncPipe, NgIf, NgFor, ReactiveFormsModule],
     providers: [provideComponentStore(RegisterStore)],
 })
 export default class Register {
