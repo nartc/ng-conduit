@@ -16,17 +16,17 @@ import {
   tap,
 } from 'rxjs';
 import {
+  Anonymous3,
+  Anonymous7,
   ApiClient,
   Article,
-  MultipleArticlesResponse,
-  TagsResponse,
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
 
 export interface HomeState {
   articles: Article[];
-  tags: TagsResponse['tags'];
+  tags: Anonymous7['tags'];
   selectedTag: string;
   feedType: 'global' | 'feed';
   statuses: Record<string, ApiStatus>;
@@ -109,7 +109,7 @@ export class HomeStore
     pipe(
       tap(() => this.setStatus({ key: 'tags', status: 'loading' })),
       switchMap(() =>
-        this.apiClient.tags().pipe(
+        this.apiClient.getTags().pipe(
           tapResponse(
             (response) => {
               this.patchState({ tags: response.tags });
@@ -189,8 +189,8 @@ export class HomeStore
     });
   }
 
-  private getArticlesPostProcessing(): MonoTypeOperatorFunction<MultipleArticlesResponse> {
-    return tapResponse<MultipleArticlesResponse, unknown>(
+  private getArticlesPostProcessing(): MonoTypeOperatorFunction<Anonymous3> {
+    return tapResponse<Anonymous3, unknown>(
       (response) => {
         this.patchState({ articles: response.articles });
         this.setStatus({ key: 'articles', status: 'success' });

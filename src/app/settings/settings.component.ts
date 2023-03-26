@@ -1,6 +1,10 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { provideComponentStore } from '@ngrx/component-store';
 import { tap } from 'rxjs';
 import { UpdateUser, User } from '../shared/data-access/api';
@@ -83,10 +87,10 @@ import { SettingsStore } from './settings.store';
   imports: [NgIf, AsyncPipe, ReactiveFormsModule],
 })
 export default class Settings {
-  private readonly fb = inject(FormBuilder);
+  private readonly fb = inject(NonNullableFormBuilder);
   private readonly store = inject(SettingsStore);
 
-  readonly form: TypedFormGroup<UpdateUser> = this.fb.nonNullable.group({});
+  readonly form: TypedFormGroup<UpdateUser> = this.fb.group({});
 
   readonly vm$ = this.store.vm$.pipe(
     tap((currentUser) => {
