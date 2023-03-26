@@ -18,10 +18,13 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import {
-  ApiClient,
   Article,
+  ArticlesApiClient,
   Comment,
+  CommentsApiClient,
+  FavoritesApiClient,
   Profile,
+  ProfileApiClient,
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus, CommentWithOwner } from '../shared/data-access/models';
@@ -49,7 +52,11 @@ export class ArticleStore
   extends ComponentStore<ArticleState>
   implements OnStateInit, OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly articlesClient = inject(ArticlesApiClient);
+  private readonly commentsClient = inject(CommentsApiClient);
+  private readonly favoritesClient = inject(FavoritesApiClient);
+  private readonly profileClient = inject(ProfileApiClient);
+
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authStore = inject(AuthStore);
@@ -98,8 +105,8 @@ export class ArticleStore
       tap(() => this.patchState({ status: 'loading' })),
       switchMap((slug) =>
         forkJoin({
-          article: this.apiClient.getArticle(slug),
-          comments: this.apiClient.getArticleComments(slug),
+          article: this.articlesClient.getArticle({ slug }),
+          comments: this.commentsClient.getArticleComments({ slug }),
         }).pipe(
           tapResponse(
             ({ article: { article }, comments: { comments } }) => {
@@ -116,11 +123,11 @@ export class ArticleStore
   );
 
   readonly toggleFavorite = this.effect<Article>(
-    exhaustMap((article) =>
+    exhaustMap(({ slug, favorited }) =>
       defer(() => {
-        if (article.favorited)
-          return this.apiClient.deleteArticleFavorite(article.slug);
-        return this.apiClient.createArticleFavorite(article.slug);
+        if (favorited)
+          return this.favoritesClient.deleteArticleFavorite({ slug });
+        return this.favoritesClient.createArticleFavorite({ slug });
       }).pipe(
         tapResponse(
           (response) => {
@@ -135,8 +142,8 @@ export class ArticleStore
   );
 
   readonly deleteArticle = this.effect<Article>(
-    exhaustMap((article) =>
-      this.apiClient.deleteArticle(article.slug).pipe(
+    exhaustMap(({ slug }) =>
+      this.articlesClient.deleteArticle({ slug }).pipe(
         tapResponse(
           () => {
             void this.router.navigate(['/']);
@@ -150,11 +157,11 @@ export class ArticleStore
   );
 
   readonly toggleFollowAuthor = this.effect<Profile>(
-    exhaustMap((profile) =>
+    exhaustMap(({ following, username }) =>
       defer(() => {
-        if (profile.following)
-          return this.apiClient.unfollowUserByUsername(profile.username);
-        return this.apiClient.followUserByUsername(profile.username);
+        if (following)
+          return this.profileClient.unfollowUserByUsername({ username });
+        return this.profileClient.followUserByUsername({ username });
       }).pipe(
         tapResponse(
           (response) => {
@@ -175,11 +182,12 @@ export class ArticleStore
 
   readonly createComment = this.effect<string>(
     pipe(
-      withLatestFrom(this.article$),
+      withLatestFrom(this.article$.pipe(filter(Boolean))),
       exhaustMap(([comment, article]) =>
-        this.apiClient
-          .createArticleComment(article!.slug, {
-            comment: { body: comment },
+        this.commentsClient
+          .createArticleComment({
+            slug: article.slug,
+            body: { comment: { body: comment } },
           })
           .pipe(
             tapResponse(
@@ -199,10 +207,10 @@ export class ArticleStore
 
   readonly deleteComment = this.effect<CommentWithOwner>(
     pipe(
-      withLatestFrom(this.article$),
+      withLatestFrom(this.article$.pipe(filter(Boolean))),
       exhaustMap(([commentWithOwner, article]) =>
-        this.apiClient
-          .deleteArticleComment(article!.slug, commentWithOwner.id)
+        this.commentsClient
+          .deleteArticleComment({ slug: article.slug, id: commentWithOwner.id })
           .pipe(
             tapResponse(
               () => {

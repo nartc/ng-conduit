@@ -6,10 +6,10 @@ import {
   OnStoreInit,
   tapResponse,
 } from '@ngrx/component-store';
-import { exhaustMap, pipe, switchMap, withLatestFrom } from 'rxjs';
+import { exhaustMap, filter, pipe, switchMap, withLatestFrom } from 'rxjs';
 import {
-  ApiClient,
   Article,
+  ArticlesApiClient,
   UpdateArticle,
 } from '../../shared/data-access/api';
 
@@ -26,7 +26,7 @@ export class EditArticleStore
   extends ComponentStore<EditArticleState>
   implements OnStateInit, OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly articlesClient = inject(ArticlesApiClient);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -47,7 +47,7 @@ export class EditArticleStore
 
   readonly getArticleBySlug = this.effect<string>(
     switchMap((slug) =>
-      this.apiClient.getArticle(slug).pipe(
+      this.articlesClient.getArticle({ slug }).pipe(
         tapResponse(
           (response) => {
             this.patchState({ article: response.article });
@@ -62,10 +62,13 @@ export class EditArticleStore
 
   readonly updateArticle = this.effect<UpdateArticle>(
     pipe(
-      withLatestFrom(this.article$),
+      withLatestFrom(this.article$.pipe(filter(Boolean))),
       exhaustMap(([updatedArticle, article]) =>
-        this.apiClient
-          .updateArticle(article!.slug, { article: updatedArticle })
+        this.articlesClient
+          .updateArticle({
+            slug: article.slug,
+            body: { article: updatedArticle },
+          })
           .pipe(
             tapResponse(
               (response) => {

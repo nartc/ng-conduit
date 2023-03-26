@@ -16,17 +16,17 @@ import {
   tap,
 } from 'rxjs';
 import {
-  Anonymous3,
-  Anonymous7,
-  ApiClient,
   Article,
+  ArticlesApiClient,
+  FavoritesApiClient,
+  TagsApiClient,
 } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
 
 export interface HomeState {
   articles: Article[];
-  tags: Anonymous7['tags'];
+  tags: Array<string>;
   selectedTag: string;
   feedType: 'global' | 'feed';
   statuses: Record<string, ApiStatus>;
@@ -54,7 +54,10 @@ export class HomeStore
   extends ComponentStore<HomeState>
   implements OnStateInit, OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly tagsClient = inject(TagsApiClient);
+  private readonly articlesClient = inject(ArticlesApiClient);
+  private readonly favoritesClient = inject(FavoritesApiClient);
+
   private readonly authStore = inject(AuthStore);
 
   private readonly statuses$ = this.select((s) => s.statuses);
@@ -109,7 +112,7 @@ export class HomeStore
     pipe(
       tap(() => this.setStatus({ key: 'tags', status: 'loading' })),
       switchMap(() =>
-        this.apiClient.getTags().pipe(
+        this.tagsClient.getTags().pipe(
           tapResponse(
             (response) => {
               this.patchState({ tags: response.tags });
@@ -132,8 +135,8 @@ export class HomeStore
         this.patchState({ selectedTag });
       }),
       switchMap((selectedTag) =>
-        this.apiClient
-          .getArticles(selectedTag)
+        this.articlesClient
+          .getArticles({ tag: selectedTag })
           .pipe(this.getArticlesPostProcessing())
       )
     )
@@ -143,7 +146,7 @@ export class HomeStore
     pipe(
       this.getArticlesPreProcessing('global'),
       switchMap(() =>
-        this.apiClient.getArticles().pipe(this.getArticlesPostProcessing())
+        this.articlesClient.getArticles().pipe(this.getArticlesPostProcessing())
       )
     )
   );
@@ -152,17 +155,19 @@ export class HomeStore
     pipe(
       this.getArticlesPreProcessing('feed'),
       switchMap(() =>
-        this.apiClient.getArticlesFeed().pipe(this.getArticlesPostProcessing())
+        this.articlesClient
+          .getArticlesFeed()
+          .pipe(this.getArticlesPostProcessing())
       )
     )
   );
 
   readonly toggleFavorite = this.effect<Article>(
-    exhaustMap((article) =>
+    exhaustMap(({ favorited, slug }) =>
       defer(() => {
-        if (article.favorited)
-          return this.apiClient.deleteArticleFavorite(article.slug);
-        return this.apiClient.createArticleFavorite(article.slug);
+        if (favorited)
+          return this.favoritesClient.deleteArticleFavorite({ slug });
+        return this.favoritesClient.createArticleFavorite({ slug });
       }).pipe(
         tapResponse(
           (response) => {
@@ -189,8 +194,10 @@ export class HomeStore
     });
   }
 
-  private getArticlesPostProcessing(): MonoTypeOperatorFunction<Anonymous3> {
-    return tapResponse<Anonymous3, unknown>(
+  private getArticlesPostProcessing(): MonoTypeOperatorFunction<{
+    articles: Article[];
+  }> {
+    return tapResponse<{ articles: Article[] }, unknown>(
       (response) => {
         this.patchState({ articles: response.articles });
         this.setStatus({ key: 'articles', status: 'success' });

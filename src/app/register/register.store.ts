@@ -5,7 +5,10 @@ import {
   tapResponse,
 } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
-import { ApiClient, NewUser } from '../shared/data-access/api';
+import {
+  NewUser,
+  UserAndAuthenticationApiClient,
+} from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { LocalStorageService } from '../shared/data-access/local-storage.service';
 import { processAuthErrors } from '../shared/utils/process-auth-errors';
@@ -23,7 +26,9 @@ export class RegisterStore
   extends ComponentStore<RegisterState>
   implements OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly userAndAuthenticationClient = inject(
+    UserAndAuthenticationApiClient
+  );
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authStore = inject(AuthStore);
 
@@ -39,24 +44,29 @@ export class RegisterStore
 
   readonly register = this.effect<NewUser>(
     exhaustMap((newUser) => {
-      return this.apiClient.createUser({ user: newUser }).pipe(
-        tapResponse(
-          (response) => {
-            this.localStorageService.setItem(
-              'ng-conduit-token',
-              response.user.token
-            );
-            this.localStorageService.setItem('ng-conduit-user', response.user);
-            this.authStore.authenticate();
-          },
-          (error: { errors: Record<string, string[]> }) => {
-            console.error('error registering new user: ', error);
-            if (error.errors) {
-              this.patchState({ errors: error.errors });
+      return this.userAndAuthenticationClient
+        .createUser({ body: { user: newUser } })
+        .pipe(
+          tapResponse(
+            (response) => {
+              this.localStorageService.setItem(
+                'ng-conduit-token',
+                response.user.token
+              );
+              this.localStorageService.setItem(
+                'ng-conduit-user',
+                response.user
+              );
+              this.authStore.authenticate();
+            },
+            (error: { errors: Record<string, string[]> }) => {
+              console.error('error registering new user: ', error);
+              if (error.errors) {
+                this.patchState({ errors: error.errors });
+              }
             }
-          }
-        )
-      );
+          )
+        );
     })
   );
 }

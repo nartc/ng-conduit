@@ -5,7 +5,10 @@ import {
   tapResponse,
 } from '@ngrx/component-store';
 import { exhaustMap } from 'rxjs';
-import { ApiClient, LoginUser } from '../shared/data-access/api';
+import {
+  LoginUser,
+  UserAndAuthenticationApiClient,
+} from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { LocalStorageService } from '../shared/data-access/local-storage.service';
 import { processAuthErrors } from '../shared/utils/process-auth-errors';
@@ -23,7 +26,9 @@ export class LoginStore
   extends ComponentStore<LoginState>
   implements OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly userAndAuthenticationClient = inject(
+    UserAndAuthenticationApiClient
+  );
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authStore = inject(AuthStore);
 
@@ -39,24 +44,29 @@ export class LoginStore
 
   readonly login = this.effect<LoginUser>(
     exhaustMap((loginUser) =>
-      this.apiClient.login({ user: loginUser }).pipe(
-        tapResponse(
-          (response) => {
-            this.localStorageService.setItem(
-              'ng-conduit-token',
-              response.user.token
-            );
-            this.localStorageService.setItem('ng-conduit-user', response.user);
-            this.authStore.authenticate();
-          },
-          (error: { errors: Record<string, string[]> }) => {
-            console.error('error login user: ', error);
-            if (error.errors) {
-              this.patchState({ errors: error.errors });
+      this.userAndAuthenticationClient
+        .login({ body: { user: loginUser } })
+        .pipe(
+          tapResponse(
+            (response) => {
+              this.localStorageService.setItem(
+                'ng-conduit-token',
+                response.user.token
+              );
+              this.localStorageService.setItem(
+                'ng-conduit-user',
+                response.user
+              );
+              this.authStore.authenticate();
+            },
+            (error: { errors: Record<string, string[]> }) => {
+              console.error('error login user: ', error);
+              if (error.errors) {
+                this.patchState({ errors: error.errors });
+              }
             }
-          }
+          )
         )
-      )
     )
   );
 }

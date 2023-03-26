@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
+  "input": "realworld.yaml",
+  "output": "src/app/shared/data-access/api/",
+  "serviceSuffix": "ApiClient",
+  "baseService": "BaseApiClient",
+  "module": false,
+  "indexFile": true
+}

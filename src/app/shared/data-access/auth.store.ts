@@ -2,7 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { defer, filter, Observable, of, switchMap, tap } from 'rxjs';
-import { ApiClient, Profile, User } from './api';
+import {
+  Profile,
+  ProfileApiClient,
+  User,
+  UserAndAuthenticationApiClient,
+} from './api';
 import { LocalStorageService } from './local-storage.service';
 
 export type AuthStatus = 'idle' | 'authenticated' | 'unauthenticated';
@@ -21,7 +26,10 @@ export const initialAuthState: AuthState = {
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore extends ComponentStore<AuthState> {
-  private readonly apiClient = inject(ApiClient);
+  private readonly userAndAuthenticationClient = inject(
+    UserAndAuthenticationApiClient
+  );
+  private readonly profileClient = inject(ProfileApiClient);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly router = inject(Router);
 
@@ -73,7 +81,7 @@ export class AuthStore extends ComponentStore<AuthState> {
         if (!token) {
           return of(null);
         }
-        return this.apiClient.getCurrentUser();
+        return this.userAndAuthenticationClient.getCurrentUser();
       }).pipe(
         tapResponse(
           (response) => {
@@ -94,7 +102,7 @@ export class AuthStore extends ComponentStore<AuthState> {
 
   private readonly profile = this.effect<string>(
     switchMap((username) =>
-      this.apiClient.getProfileByUsername(username).pipe(
+      this.profileClient.getProfileByUsername({ username }).pipe(
         tapResponse(
           (response) => {
             this.patchState({ profile: response.profile });

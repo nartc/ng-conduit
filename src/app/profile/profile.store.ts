@@ -16,7 +16,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { ApiClient, Profile } from '../shared/data-access/api';
+import { Profile, ProfileApiClient } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 import { ApiStatus } from '../shared/data-access/models';
 
@@ -41,7 +41,7 @@ export class ProfileStore
   extends ComponentStore<ProfileState>
   implements OnStateInit, OnStoreInit
 {
-  private readonly apiClient = inject(ApiClient);
+  private readonly profileClient = inject(ProfileApiClient);
   private readonly route = inject(ActivatedRoute);
   private readonly authStore = inject(AuthStore);
 
@@ -76,7 +76,7 @@ export class ProfileStore
     pipe(
       tap(() => this.patchState({ status: 'loading' })),
       switchMap((username) =>
-        this.apiClient.getProfileByUsername(username).pipe(
+        this.profileClient.getProfileByUsername({ username }).pipe(
           tapResponse(
             (response) => {
               this.patchState({ profile: response.profile, status: 'success' });
@@ -92,11 +92,11 @@ export class ProfileStore
   );
 
   readonly toggleFollow = this.effect<Profile>(
-    exhaustMap((profile) =>
+    exhaustMap(({ following, username }) =>
       defer(() => {
-        if (profile.following)
-          return this.apiClient.unfollowUserByUsername(profile.username);
-        return this.apiClient.followUserByUsername(profile.username);
+        if (following)
+          return this.profileClient.unfollowUserByUsername({ username });
+        return this.profileClient.followUserByUsername({ username });
       }).pipe(
         tapResponse(
           (response) => {

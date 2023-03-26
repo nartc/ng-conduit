@@ -15,7 +15,11 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs';
-import { ApiClient, Article } from '../../shared/data-access/api';
+import {
+  Article,
+  ArticlesApiClient,
+  FavoritesApiClient,
+} from '../../shared/data-access/api';
 import { ApiStatus } from '../../shared/data-access/models';
 import { ProfileArticlesType, ProfileStore } from '../profile.store';
 import { PROFILE_ARTICLES_TYPE } from './articles.di';
@@ -35,9 +39,11 @@ export class ArticlesStore
   extends ComponentStore<ArticlesState>
   implements OnStoreInit, OnStateInit
 {
+  private readonly articlesClient = inject(ArticlesApiClient);
+  private readonly favoritesClient = inject(FavoritesApiClient);
+
   private readonly type = inject(PROFILE_ARTICLES_TYPE);
   private readonly profileStore = inject(ProfileStore);
-  private readonly apiClient = inject(ApiClient);
 
   readonly vm$: Observable<ArticlesState> = this.select(
     this.select((s) => s.articles),
@@ -61,12 +67,10 @@ export class ArticlesStore
       switchMap(([type, profile]) =>
         defer(() => {
           if (type === 'favorites')
-            return this.apiClient.getArticles(
-              undefined,
-              undefined,
-              profile?.username
-            );
-          return this.apiClient.getArticles(undefined, profile?.username);
+            return this.articlesClient.getArticles({
+              favorited: profile?.username,
+            });
+          return this.articlesClient.getArticles({ author: profile?.username });
         }).pipe(
           tapResponse(
             (response) => {
@@ -86,11 +90,11 @@ export class ArticlesStore
   );
 
   readonly toggleFavorite = this.effect<Article>(
-    exhaustMap((article) =>
+    exhaustMap(({ favorited, slug }) =>
       defer(() => {
-        if (article.favorited)
-          return this.apiClient.deleteArticleFavorite(article.slug);
-        return this.apiClient.createArticleFavorite(article.slug);
+        if (favorited)
+          return this.favoritesClient.deleteArticleFavorite({ slug });
+        return this.favoritesClient.createArticleFavorite({ slug });
       }).pipe(
         tapResponse(
           (response) => {

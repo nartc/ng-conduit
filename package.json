@@ -5,10 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "e2e": "ng e2e",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "openapi": "ng-openapi-gen"
   },
   "private": true,
   "dependencies": {
@@ -45,6 +44,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "ng-openapi-gen": "^0.24.1",
     "nswag": "13.18.2",
     "prettier": "2.8.7",
     "prettier-plugin-organize-imports": "^3.2.2",

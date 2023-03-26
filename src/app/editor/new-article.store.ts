@@ -6,12 +6,12 @@ import {
   tapResponse,
 } from '@ngrx/component-store';
 import { exhaustMap, pipe, withLatestFrom } from 'rxjs';
-import { ApiClient, NewArticle } from '../shared/data-access/api';
+import { ArticlesApiClient, NewArticle } from '../shared/data-access/api';
 import { AuthStore } from '../shared/data-access/auth.store';
 
 @Injectable()
 export class NewArticleStore extends ComponentStore<{}> implements OnStoreInit {
-  private readonly apiClient = inject(ApiClient);
+  private readonly articlesClient = inject(ArticlesApiClient);
   private readonly router = inject(Router);
   private readonly authStore = inject(AuthStore);
 
@@ -23,7 +23,7 @@ export class NewArticleStore extends ComponentStore<{}> implements OnStoreInit {
     pipe(
       withLatestFrom(this.authStore.auth$),
       exhaustMap(([article, { user }]) =>
-        this.apiClient.createArticle({ article }).pipe(
+        this.articlesClient.createArticle({ body: { article } }).pipe(
           tapResponse(
             (response) => {
               if (response && response.article) {
