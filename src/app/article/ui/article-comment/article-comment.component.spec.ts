@@ -4,103 +4,82 @@ import { By } from '@angular/platform-browser';
 import { render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CommentWithOwner } from '../../../shared/data-access/models';
-import {
-  getMockedCommentWithOwner,
-  getMockedProfile,
-  getMockedUser,
-} from '../../../testing.spec';
+import { getMockedCommentWithOwner, getMockedProfile, getMockedUser } from '../../../testing.spec';
 import { ArticleComment } from './article-comment.component';
 
 describe(ArticleComment.name, () => {
-  let mockedDelete: jasmine.SpyObj<EventEmitter<void>>;
+    let mockedDelete: jasmine.SpyObj<EventEmitter<void>>;
 
-  async function setup(comment: CommentWithOwner) {
-    mockedDelete = jasmine.createSpyObj('mocked delete', ['emit']);
+    async function setup(comment: CommentWithOwner) {
+        mockedDelete = jasmine.createSpyObj('mocked delete', ['emit']);
 
-    return await render(ArticleComment, {
-      componentProperties: {
-        comment,
-        delete: mockedDelete,
-      },
-    });
-  }
+        return await render(ArticleComment, {
+            componentProperties: {
+                comment,
+                delete: mockedDelete,
+            },
+        });
+    }
 
-  describe('Given a comment that is not owned', () => {
-    const mockedComment = getMockedCommentWithOwner({
-      profile: getMockedProfile({ username: 'some-other' }),
-      authUser: getMockedUser({ username: 'other' }),
-    });
+    describe('Given a comment that is not owned', () => {
+        const mockedComment = getMockedCommentWithOwner({
+            profile: getMockedProfile({ username: 'some-other' }),
+            authUser: getMockedUser({ username: 'other' }),
+        });
 
-    it('Then render comment body', async () => {
-      const { getByText } = await setup(mockedComment);
-      expect(getByText(mockedComment.body)).toBeTruthy();
-    });
+        it('Then render comment body', async () => {
+            const { getByText } = await setup(mockedComment);
+            expect(getByText(mockedComment.body)).toBeTruthy();
+        });
 
-    it('Then render comment footer without mod options', async () => {
-      const { debugElement } = await setup(mockedComment);
+        it('Then render comment footer without mod options', async () => {
+            const { debugElement } = await setup(mockedComment);
 
-      const authorAvatarLink = debugElement.query(
-        By.css('.comment-author#authorAvatar')
-      );
-      expect(authorAvatarLink.nativeElement).toHaveAttribute(
-        'href',
-        `/profile/${mockedComment.author.username}`
-      );
+            const authorAvatarLink = debugElement.query(By.css('.comment-author#authorAvatar'));
+            expect(authorAvatarLink.nativeElement).toHaveAttribute('href', `/profile/${mockedComment.author.username}`);
 
-      const authorImage = authorAvatarLink.query(
-        By.css('img.comment-author-img')
-      );
-      expect(authorImage.nativeElement).toHaveAttribute(
-        'src',
-        mockedComment.author.image
-      );
+            const authorImage = authorAvatarLink.query(By.css('img.comment-author-img'));
+            expect(authorImage.nativeElement).toHaveAttribute('src', mockedComment.author.image);
 
-      const authorUsernameLink = debugElement.query(
-        By.css('.comment-author#authorUsername')
-      );
-      expect(authorUsernameLink.nativeElement).toHaveAttribute(
-        'href',
-        `/profile/${mockedComment.author.username}`
-      );
-      expect(authorUsernameLink.nativeElement).toHaveTextContent(
-        mockedComment.author.username
-      );
+            const authorUsernameLink = debugElement.query(By.css('.comment-author#authorUsername'));
+            expect(authorUsernameLink.nativeElement).toHaveAttribute(
+                'href',
+                `/profile/${mockedComment.author.username}`
+            );
+            expect(authorUsernameLink.nativeElement).toHaveTextContent(mockedComment.author.username);
 
-      const dateSpan = debugElement.query(By.css('.date-posted'));
-      const locale = debugElement.injector.get(LOCALE_ID);
-      expect(dateSpan.nativeElement).toHaveTextContent(
-        new DatePipe(locale).transform(
-          mockedComment.updatedAt,
-          'mediumDate'
-        ) as string
-      );
+            const dateSpan = debugElement.query(By.css('.date-posted'));
+            const locale = debugElement.injector.get(LOCALE_ID);
+            expect(dateSpan.nativeElement).toHaveTextContent(
+                new DatePipe(locale).transform(mockedComment.updatedAt, 'mediumDate') as string
+            );
 
-      const modOptionsSpan = debugElement.query(By.css('.mod-options'));
-      expect(modOptionsSpan).toBeFalsy();
-    });
-  });
-
-  describe('Given a comment that is owned', () => {
-    const mockedComment = getMockedCommentWithOwner();
-
-    it('Then render footer with mod options', async () => {
-      const { debugElement } = await setup(mockedComment);
-
-      const modOptionsSpan = debugElement.query(By.css('.mod-options'));
-      expect(modOptionsSpan).toBeTruthy();
+            const modOptionsSpan = debugElement.query(By.css('.mod-options'));
+            expect(modOptionsSpan).toBeFalsy();
+        });
     });
 
-    describe('When click delete', () => {
-      it('Then emit with delete output', async () => {
-        const { debugElement } = await setup(mockedComment);
+    describe('Given a comment that is owned', () => {
+        const mockedComment = getMockedCommentWithOwner();
 
-        const modOptionsSpan = debugElement.query(By.css('.mod-options'));
-        const deleteIcon = modOptionsSpan.query(By.css('i'));
+        it('Then render footer with mod options', async () => {
+            const { debugElement } = await setup(mockedComment);
 
-        await userEvent.click(deleteIcon.nativeElement);
+            const modOptionsSpan = debugElement.query(By.css('.mod-options'));
+            expect(modOptionsSpan).toBeTruthy();
+        });
 
-        expect(mockedDelete.emit).toHaveBeenCalled();
-      });
+        describe('When click delete', () => {
+            it('Then emit with delete output', async () => {
+                const { debugElement } = await setup(mockedComment);
+
+                const modOptionsSpan = debugElement.query(By.css('.mod-options'));
+                const deleteIcon = modOptionsSpan.query(By.css('i'));
+
+                await userEvent.click(deleteIcon.nativeElement);
+
+                expect(mockedDelete.emit).toHaveBeenCalled();
+            });
+        });
     });
-  });
 });

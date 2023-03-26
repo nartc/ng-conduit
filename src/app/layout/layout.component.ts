@@ -6,20 +6,17 @@ import { Footer } from './ui/footer/footer.component';
 import { Header } from './ui/header/header.component';
 
 @Component({
-  template: `
-    <ng-container *ngIf="auth$ | async as auth">
-      <app-header
-        [isAuthenticated]="auth.isAuthenticated"
-        [username]="auth.user?.username"
-      />
-      <router-outlet />
-      <app-footer />
-    </ng-container>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [Header, Footer, RouterOutlet, NgIf, AsyncPipe],
+    template: `
+        <ng-container *ngIf="auth$ | async as auth">
+            <app-header [isAuthenticated]="auth.isAuthenticated" [username]="auth.user?.username" />
+            <router-outlet />
+            <app-footer />
+        </ng-container>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Header, Footer, RouterOutlet, NgIf, AsyncPipe],
 })
 export default class Layout {
-  readonly auth$ = inject(AuthStore).auth$;
+    readonly auth$ = inject(AuthStore).auth$;
 }

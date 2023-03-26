@@ -14,12 +14,12 @@ For more information on how to this works with other frontends/backends, head ov
 
 > Describe the general architecture of your app here
 
-- All Components are authored with `standalone:true`
-- Experimenting with `inject()` instead of traditional Constructor DI
-- Using `@ngrx/component-store` as State Management solution
-- API SDK Stub is generated with [Nswag](http://nswag.org/)
+-   All Components are authored with `standalone:true`
+-   Experimenting with `inject()` instead of traditional Constructor DI
+-   Using `@ngrx/component-store` as State Management solution
+-   API SDK Stub is generated with [Nswag](http://nswag.org/)
 
 # Getting started
 
-- `pnpm install`
-- `npm run serve`
+-   `pnpm install`
+-   `npm run serve`

@@ -9,65 +9,61 @@ import { FeedToggle } from './ui/feed-toggle/feed-toggle.component';
 import { Tags } from './ui/tags/tags.component';
 
 @Component({
-  template: `
-    <ng-container *ngIf="vm$ | async as vm">
-      <div class="home-page">
-        <app-banner />
+    template: `
+        <ng-container *ngIf="vm$ | async as vm">
+            <div class="home-page">
+                <app-banner />
 
-        <div class="container page">
-          <div class="row">
-            <div class="col-md-9">
-              <app-feed-toggle
-                [selectedTag]="vm.selectedTag"
-                [isFeedDisabled]="!vm.isAuthenticated"
-                [feedType]="vm.feedType"
-                (selectFeed)="selectFeed()"
-                (selectGlobal)="selectGlobal()"
-              />
-              <app-articles-list
-                [status]="vm.articlesStatus"
-                [articles]="vm.articles"
-                (toggleFavorite)="toggleFavorite($event)"
-              />
-            </div>
+                <div class="container page">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <app-feed-toggle
+                                [selectedTag]="vm.selectedTag"
+                                [isFeedDisabled]="!vm.isAuthenticated"
+                                [feedType]="vm.feedType"
+                                (selectFeed)="selectFeed()"
+                                (selectGlobal)="selectGlobal()"
+                            />
+                            <app-articles-list
+                                [status]="vm.articlesStatus"
+                                [articles]="vm.articles"
+                                (toggleFavorite)="toggleFavorite($event)"
+                            />
+                        </div>
 
-            <div class="col-md-3">
-              <app-tags
-                [status]="vm.tagsStatus"
-                [tags]="vm.tags"
-                (selectTag)="selectTag($event)"
-              >
-                <p>Loading...</p>
-              </app-tags>
+                        <div class="col-md-3">
+                            <app-tags [status]="vm.tagsStatus" [tags]="vm.tags" (selectTag)="selectTag($event)">
+                                <p>Loading...</p>
+                            </app-tags>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [Banner, Tags, FeedToggle, ArticlesList, NgIf, AsyncPipe],
-  providers: [provideComponentStore(HomeStore)],
+        </ng-container>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [Banner, Tags, FeedToggle, ArticlesList, NgIf, AsyncPipe],
+    providers: [provideComponentStore(HomeStore)],
 })
 export default class Home {
-  private readonly store = inject(HomeStore);
+    private readonly store = inject(HomeStore);
 
-  readonly vm$ = this.store.vm$;
+    readonly vm$ = this.store.vm$;
 
-  selectTag(tag: string) {
-    this.store.getArticlesByTag(tag);
-  }
+    selectTag(tag: string) {
+        this.store.getArticlesByTag(tag);
+    }
 
-  selectFeed() {
-    this.store.getFeedArticles();
-  }
+    selectFeed() {
+        this.store.getFeedArticles();
+    }
 
-  selectGlobal() {
-    this.store.getArticles();
-  }
+    selectGlobal() {
+        this.store.getArticles();
+    }
 
-  toggleFavorite(article: Article) {
-    this.store.toggleFavorite(article);
-  }
+    toggleFavorite(article: Article) {
+        this.store.toggleFavorite(article);
+    }
 }

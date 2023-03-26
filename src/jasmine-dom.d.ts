@@ -1,4 +1,4 @@
 declare module '@testing-library/jasmine-dom' {
-  const JasmineDOM: any;
-  export default JasmineDOM;
+    const JasmineDOM: any;
+    export default JasmineDOM;
 }
