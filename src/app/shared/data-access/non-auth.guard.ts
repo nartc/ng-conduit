@@ -5,9 +5,8 @@ import { AuthStore } from './auth.store';
 
 export function nonAuthGuard(): CanMatchFn {
     return () => {
-        const authStore = inject(AuthStore);
         const router = inject(Router);
-        return authStore.isAuthenticated$.pipe(
+        return inject(AuthStore).isAuthenticated$.pipe(
             map((isAuthenticated) => {
                 if (!isAuthenticated) return !isAuthenticated;
                 return router.parseUrl('/');

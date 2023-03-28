@@ -3,8 +3,8 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "./out-tsc/spec",
-        "types": ["jasmine", "@testing-library/jasmine-dom"]
+        "types": ["jasmine", "cypress", "@testing-library/cypress"]
     },
     "files": ["src/test.ts", "src/polyfills.ts"],
-    "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+    "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/**/*.cy.ts"]
 }

@@ -12,9 +12,7 @@ import { Component, Input } from '@angular/core';
         </div>
     `,
     standalone: true,
-    host: {
-        '[style.display]': "'block'",
-    },
+    host: { '[style.display]': "'block'" },
 })
 export class FormLayout {
     @Input() innerClass = '';

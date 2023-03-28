@@ -25,8 +25,8 @@ export function getMockedUser(user: Partial<User> = {}): User {
 export function getMockedArticleComment(id: number, profile: Partial<Profile> = {}): Comment {
     return {
         id,
-        createdAt: new Date('10/14/1991'),
-        updatedAt: new Date('10/14/1991'),
+        createdAt: new Date('10/14/1991').toString(),
+        updatedAt: new Date('10/14/1991').toString(),
         body: 'body',
         author: getMockedProfile(profile),
     };
@@ -49,8 +49,8 @@ export function getMockedArticle(
         slug: 'article-title',
         favoritesCount: 5,
         description: 'description',
-        createdAt: new Date('10/14/1991'),
-        updatedAt: new Date('10/14/1991'),
+        createdAt: new Date('10/14/1991').toString(),
+        updatedAt: new Date('10/14/1991').toString(),
         ...article,
         author: getMockedProfile(profile),
     };
@@ -74,8 +74,8 @@ export function getMockedCommentWithOwner(
     return {
         isOwner: profile.username === authUser.username,
         body: 'body',
-        updatedAt: new Date('10/14/1991'),
-        createdAt: new Date('10/14/1991'),
+        updatedAt: new Date('10/14/1991').toString(),
+        createdAt: new Date('10/14/1991').toString(),
         id: 1,
         ...comment,
         author: profile,
