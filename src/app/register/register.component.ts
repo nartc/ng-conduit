@@ -2,11 +2,12 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { provideComponentStore } from '@ngrx/component-store';
+import { tap } from 'rxjs';
 import { NewUser } from '../shared/data-access/api';
+import { ERRORS_API } from '../shared/data-access/errors/errors-api.di';
 import { FormLayout } from '../shared/ui/form-layout/form-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
-import { RegisterStore } from './register.store';
+import { provideRegister, REGISTER } from './register.di';
 
 @Component({
     template: `
@@ -56,12 +57,13 @@ import { RegisterStore } from './register.store';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [FormLayout, RouterLink, AsyncPipe, NgIf, NgFor, ReactiveFormsModule],
-    providers: [provideComponentStore(RegisterStore)],
+    providers: [provideRegister()],
 })
 export default class Register {
-    private readonly store = inject(RegisterStore);
+    private readonly register = inject(REGISTER);
+    private readonly errorsApi = inject(ERRORS_API);
 
-    readonly registerErrors$ = this.store.registerErrors$;
+    readonly registerErrors$ = this.errorsApi.errors$.pipe(tap(console.log));
 
     readonly form: TypedFormGroup<NewUser> = inject(FormBuilder).nonNullable.group({
         username: ['', [Validators.required]],
@@ -70,6 +72,6 @@ export default class Register {
     });
 
     submit() {
-        this.store.register(this.form.getRawValue());
+        this.register(this.form.getRawValue());
     }
 }

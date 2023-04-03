@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { ComponentStore, OnStoreInit, tapResponse } from '@ngrx/component-store';
 import { exhaustMap, pipe, withLatestFrom } from 'rxjs';
 import { ArticlesApiClient, NewArticle } from '../shared/data-access/api';
-import { AuthStore } from '../shared/data-access/auth.store';
+import { AUTH_STORE } from '../shared/data-access/auth/auth.di';
 
 @Injectable()
 export class NewArticleStore extends ComponentStore<{}> implements OnStoreInit {
     private readonly articlesClient = inject(ArticlesApiClient);
     private readonly router = inject(Router);
-    private readonly authStore = inject(AuthStore);
+    private readonly authStore = inject(AUTH_STORE);
 
     ngrxOnStoreInit() {
         this.setState({});

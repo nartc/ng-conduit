@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit, OnStoreInit, tapResponse } from '@ngrx/component-store';
 import { defer, exhaustMap, filter, MonoTypeOperatorFunction, Observable, pipe, switchMap, tap } from 'rxjs';
 import { Article, ArticlesApiClient, FavoritesApiClient, TagsApiClient } from '../shared/data-access/api';
-import { AuthStore } from '../shared/data-access/auth.store';
+import { AUTH_STORE } from '../shared/data-access/auth/auth.di';
 import { ApiStatus } from '../shared/data-access/models';
 
 export interface HomeState {
@@ -36,7 +36,7 @@ export class HomeStore extends ComponentStore<HomeState> implements OnStateInit,
     private readonly articlesClient = inject(ArticlesApiClient);
     private readonly favoritesClient = inject(FavoritesApiClient);
 
-    private readonly authStore = inject(AuthStore);
+    private readonly authStore = inject(AUTH_STORE);
 
     private readonly statuses$ = this.select((s) => s.statuses);
 

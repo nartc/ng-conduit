@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ComponentStore, OnStateInit, OnStoreInit, tapResponse } from '@ngrx/component-store';
 import { defer, exhaustMap, filter, map, Observable, pipe, switchMap, tap } from 'rxjs';
 import { Profile, ProfileApiClient } from '../shared/data-access/api';
-import { AuthStore } from '../shared/data-access/auth.store';
+import { AUTH_STORE } from '../shared/data-access/auth/auth.di';
 import { ApiStatus } from '../shared/data-access/models';
 
 export interface ProfileState {
@@ -26,7 +26,7 @@ export type ProfileArticlesType = 'my' | 'favorites';
 export class ProfileStore extends ComponentStore<ProfileState> implements OnStateInit, OnStoreInit {
     private readonly profileClient = inject(ProfileApiClient);
     private readonly route = inject(ActivatedRoute);
-    private readonly authStore = inject(AuthStore);
+    private readonly authStore = inject(AUTH_STORE);
 
     readonly profile$ = this.select((s) => s.profile);
 

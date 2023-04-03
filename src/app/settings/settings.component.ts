@@ -1,11 +1,10 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { provideComponentStore } from '@ngrx/component-store';
 import { tap } from 'rxjs';
 import { UpdateUser, User } from '../shared/data-access/api';
 import { TypedFormGroup } from '../shared/utils/typed-form';
-import { SettingsStore } from './settings.store';
+import { provideSettingsApi, SETTINGS_API } from './settings-api.di';
 
 @Component({
     template: `
@@ -77,16 +76,16 @@ import { SettingsStore } from './settings.store';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    providers: [provideComponentStore(SettingsStore)],
+    providers: [provideSettingsApi()],
     imports: [NgIf, AsyncPipe, ReactiveFormsModule],
 })
 export default class Settings {
     private readonly fb = inject(NonNullableFormBuilder);
-    private readonly store = inject(SettingsStore);
+    private readonly settingsApi = inject(SETTINGS_API);
 
     readonly form: TypedFormGroup<UpdateUser> = this.fb.group({});
 
-    readonly vm$ = this.store.vm$.pipe(
+    readonly vm$ = this.settingsApi.user$.pipe(
         tap((currentUser) => {
             if (currentUser && !this.isFormInitialized) {
                 this.initForm(currentUser);
@@ -106,10 +105,10 @@ export default class Settings {
     }
 
     submit() {
-        this.store.updateSettings(this.form.getRawValue());
+        this.settingsApi.updateSettings(this.form.getRawValue());
     }
 
     logout() {
-        this.store.logout();
+        this.settingsApi.logout();
     }
 }

@@ -2,11 +2,11 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { provideComponentStore } from '@ngrx/component-store';
 import { LoginUser } from '../shared/data-access/api';
+import { ERRORS_API } from '../shared/data-access/errors/errors-api.di';
 import { FormLayout } from '../shared/ui/form-layout/form-layout.component';
 import { TypedFormGroup } from '../shared/utils/typed-form';
-import { LoginStore } from './login.store';
+import { LOGIN, provideLogin } from './login.di';
 
 @Component({
     template: `
@@ -48,12 +48,13 @@ import { LoginStore } from './login.store';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [FormLayout, NgIf, RouterLink, NgFor, AsyncPipe, ReactiveFormsModule],
-    providers: [provideComponentStore(LoginStore)],
+    providers: [provideLogin()],
 })
 export default class Login {
-    private readonly store = inject(LoginStore);
+    private readonly login = inject(LOGIN);
+    private readonly errorsApi = inject(ERRORS_API);
 
-    readonly loginErrors$ = this.store.loginErrors$;
+    readonly loginErrors$ = this.errorsApi.errors$;
 
     readonly form: TypedFormGroup<LoginUser> = inject(FormBuilder).nonNullable.group({
         email: ['', [Validators.email]],
@@ -61,6 +62,6 @@ export default class Login {
     });
 
     submit() {
-        this.store.login(this.form.getRawValue());
+        this.login(this.form.getRawValue());
     }
 }

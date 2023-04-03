@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Profile } from '../../../shared/data-access/api';
 
 @Component({
@@ -36,7 +36,7 @@ import { Profile } from '../../../shared/data-access/api';
         </div>
     `,
     standalone: true,
-    imports: [NgIf, RouterLinkActive],
+    imports: [NgIf, RouterLink],
 })
 export class UserInfo {
     @Input() profile!: Profile;

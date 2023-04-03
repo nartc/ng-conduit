@@ -11,7 +11,7 @@ import {
     Profile,
     ProfileApiClient,
 } from '../shared/data-access/api';
-import { AuthStore } from '../shared/data-access/auth.store';
+import { AUTH_STORE } from '../shared/data-access/auth/auth.di';
 import { ApiStatus, CommentWithOwner } from '../shared/data-access/models';
 
 export interface ArticleState {
@@ -41,7 +41,7 @@ export class ArticleStore extends ComponentStore<ArticleState> implements OnStat
 
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
-    private readonly authStore = inject(AuthStore);
+    private readonly authStore = inject(AUTH_STORE);
 
     readonly slug$ = this.select(this.route.params, (params) => params['slug'] as string);
 
